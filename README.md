@@ -14,13 +14,14 @@ Milestone 1 development. The repository contains a basic React and Express scaff
 
 - Frontend: React
 - Backend: Node.js + Express
-- Database: SQL, have not decided which one yet
+- Database: PostgreSQL through Prisma ORM; Supabase will host the deployed database
 
 ## Files
 
 - `docs/BACKLOG.md` - prioritized user stories
 - `docs/architecture-diagram.md` - architecture diagram (Mermaid)
 - `docs/adr/` - accepted architecture decision records
+- `docs/local-database-development.md` - shared Docker PostgreSQL development setup
 
 ## Setup
 
@@ -28,6 +29,7 @@ Requires Node.js 24 or newer.
 
 ```bash
 npm install
+npm run db:start
 npm run dev
 ```
 
@@ -42,6 +44,8 @@ npm start
 ```
 
 `npm start` runs the compiled server and requires `npm run build` first. Verify the API at `GET /api/health`; a healthy server returns `{ "status": "ok" }`.
+
+The Docker PostgreSQL container starts with an empty `grade_tracker` database. Follow the [local database development guide](docs/local-database-development.md) for setup, verification, shutdown, reset, and troubleshooting instructions.
 
 ## Branching
 
