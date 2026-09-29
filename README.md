@@ -20,6 +20,12 @@ Milestone 1 development. The repository contains a basic React and Express scaff
 
 - `docs/BACKLOG.md` - prioritized user stories
 - `docs/architecture-diagram.md` - architecture diagram (Mermaid)
+- `docs/use-cases.md` - Milestone 1 use cases and acceptance outcomes
+- `docs/analysis-model.md` - domain entities, rules, states, and data flow
+- `docs/api-design.md` - HTTP interface contract and examples
+- `docs/component-designs.md` - detailed authentication and grade-entry designs
+- `docs/wireframes.md` - responsive, multi-screen UX wireframes
+- `docs/design-patterns.md` - implemented design patterns and rationale
 - `docs/adr/` - accepted architecture decision records
 - `docs/local-database-development.md` - shared Docker PostgreSQL development setup
 
