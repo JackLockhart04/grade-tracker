@@ -18,6 +18,7 @@ Milestone 1 working MVP. The application supports authentication, course/categor
 
 ## Files
 
+- `docs/milestone-1-overview.md` - updated product brief, MVP scope, process, and Definition of Done
 - `docs/BACKLOG.md` - prioritized user stories
 - `docs/architecture-diagram.md` - architecture diagram (Mermaid)
 - `docs/use-cases.md` - Milestone 1 use cases and acceptance outcomes
@@ -27,8 +28,11 @@ Milestone 1 working MVP. The application supports authentication, course/categor
 - `docs/wireframes.md` - responsive, multi-screen UX wireframes
 - `docs/design-patterns.md` - implemented design patterns and rationale
 - `docs/verification-guide.md` - fresh-clone setup and Milestone 1 acceptance checks
+- `docs/quality-checks.md` - Lighthouse, accessibility, responsive, and performance check procedure
+- `docs/contributions.md` - team contribution statements for review before submission
 - `docs/adr/` - accepted architecture decision records
 - `docs/local-database-development.md` - shared Docker PostgreSQL development setup
+- `LICENSE` - MIT license
 
 ## Setup
 
@@ -185,7 +189,16 @@ Extra credit can raise a course average above 100%, but grade points remain capp
 ## Definition of Done
 
 A backlog item is Done when:
-- [ ] Code is committed with a descriptive message
-- [ ] It runs locally per the project setup instructions
-- [ ] It does not break previously-passing verification steps
-- [ ] New setup steps, environment variables, or database migrations are documented
+
+- [ ] Its acceptance behavior works through the user interface and database
+- [ ] Authenticated resources remain private to their owning user
+- [ ] The production build and existing checks pass
+- [ ] It runs locally using the committed setup instructions
+- [ ] New setup steps, environment variables, database migrations, and affected designs are documented
+- [ ] The change is committed with a descriptive message and is ready for teammate review
+
+The complete Milestone 1 scope and process are documented in [docs/milestone-1-overview.md](docs/milestone-1-overview.md).
+
+## License
+
+Grade Tracker is available under the [MIT License](LICENSE).

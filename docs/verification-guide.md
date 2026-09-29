@@ -216,6 +216,8 @@ The updated Software Engineering calculation is:
 5. Confirm forms and cards stack vertically and the grade-breakdown table scrolls horizontally.
 6. Use the keyboard to tab through forms and buttons; focus should remain visible and every input should have a readable label.
 
+Run and record the more complete Lighthouse, accessibility, zoom, and performance procedure in [quality-checks.md](quality-checks.md) against the final Milestone 1 commit.
+
 ## 10. Stop the local environment
 
 Stop the development servers with `Ctrl+C`, then stop PostgreSQL:
@@ -240,3 +242,4 @@ Normal shutdown preserves the local demonstration data. Database reset instructi
 - [ ] A second user cannot see the first user's data.
 - [ ] Data persists after restarting the application.
 - [ ] The interface remains usable at a phone-width viewport and by keyboard.
+- [ ] Lighthouse and manual accessibility/performance checks are recorded for the final commit.

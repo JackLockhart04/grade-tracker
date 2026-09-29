@@ -54,3 +54,97 @@ flowchart LR
 - The calculation service contains pure category, course, letter-grade, and GPA formulas. It never writes data.
 - Prisma owns database queries and migrations. PostgreSQL constraints protect point ranges, weights, relationships, and cascade deletion.
 - What-if simulation and guest viewing are intentionally outside this Milestone 1 boundary.
+
+## Design types and operations
+
+Grade Tracker uses functional React components and router factories instead of requiring every responsibility to be represented by a JavaScript class. The following design-level view is the TypeScript equivalent of a design-class diagram: it shows the principal components, interfaces, public operations, and dependencies without implying runtime classes that do not exist in the source.
+
+```mermaid
+classDiagram
+    class App {
+        +render authentication state
+        +loadCurrentUser()
+        +register()
+        +login()
+        +logout()
+    }
+
+    class Dashboard {
+        +loadCourses()
+        +openCourse(courseId)
+        +addCourse()
+        +deleteCourse()
+    }
+
+    class CourseDetail {
+        +updateCourse()
+        +addCategory()
+        +refreshSelectedCourse()
+    }
+
+    class CategoryRow {
+        +save()
+        +remove()
+        +addAssignment()
+    }
+
+    class AssignmentRow {
+        +save()
+        +remove()
+    }
+
+    class AuthRouter {
+        +register
+        +login
+        +logout
+        +currentUser
+    }
+
+    class CourseRouter {
+        +listCourses
+        +createCourse
+        +readCourse
+        +updateCourse
+        +deleteCourse
+        +manageCategories
+    }
+
+    class AssignmentRouter {
+        +listAssignments
+        +createAssignment
+        +readAssignment
+        +updateAssignment
+        +deleteAssignment
+    }
+
+    class GradeCalculations {
+        +calculateCategoryGrade(assignments)
+        +calculateCourseGrade(categories)
+        +calculateCumulativeGpa(courses)
+        +gradeScale(averagePercentage)
+    }
+
+    class PrismaClient {
+        +user
+        +course
+        +category
+        +assignment
+        +session
+    }
+
+    App --> Dashboard
+    Dashboard *-- CourseDetail
+    CourseDetail *-- CategoryRow
+    CategoryRow *-- AssignmentRow
+    App ..> AuthRouter : JSON over HTTP
+    Dashboard ..> CourseRouter : JSON over HTTP
+    CourseDetail ..> CourseRouter : JSON over HTTP
+    CategoryRow ..> AssignmentRouter : JSON over HTTP
+    AssignmentRow ..> AssignmentRouter : JSON over HTTP
+    CourseRouter --> GradeCalculations
+    AuthRouter --> PrismaClient
+    CourseRouter --> PrismaClient
+    AssignmentRouter --> PrismaClient
+```
+
+The request and response structures shared across these boundaries are defined in [api-design.md](api-design.md). The persisted relationships and invariants are defined in [analysis-model.md](analysis-model.md).
