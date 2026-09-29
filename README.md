@@ -46,7 +46,18 @@ npm start
 
 `npm start` runs the compiled server and requires `npm run build` first. Verify the API at `GET /api/health`; a healthy server returns `{ "status": "ok" }`. `GET /api/ready` also checks the PostgreSQL connection and returns `{ "status": "ready" }` when the database is available.
 
-The initial Prisma migration creates only the `User` model described in the Milestone 0 report. Follow the [local database development guide](docs/local-database-development.md) for setup, migrations, verification, shutdown, reset, and troubleshooting instructions.
+The database currently contains the `User` model described in the Milestone 0 report and a session table for authentication. Registration and login use Argon2id password hashes and server-side sessions stored in PostgreSQL. Follow the [local database development guide](docs/local-database-development.md) for setup, migrations, verification, shutdown, reset, and troubleshooting instructions.
+
+## Authentication API
+
+| Method | Endpoint | Purpose |
+|--------|----------|---------|
+| `POST` | `/api/auth/register` | Create an account and begin a session |
+| `POST` | `/api/auth/login` | Log in with email and password |
+| `POST` | `/api/auth/logout` | End the current session |
+| `GET` | `/api/auth/me` | Return the current signed-in user |
+
+Registration and login accept JSON containing `email` and `password`. Passwords must contain 12 to 128 characters. Authentication cookies are HTTP-only, use `SameSite=Lax`, and become secure cookies in production. Set a long, random `SESSION_SECRET` in every deployed environment.
 
 ## Branching
 

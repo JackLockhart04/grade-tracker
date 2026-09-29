@@ -2,7 +2,7 @@
 
 This guide is the shared source of truth for running Grade Tracker's PostgreSQL database during local development. Both team members should follow the same steps and use the repository's `compose.yaml` rather than creating separate PostgreSQL configurations.
 
-Prisma manages the application schema and committed migration history. The initial schema contains only the `User` model described in the Milestone 0 report. Additional models and seed data will be added later.
+Prisma manages the application schema and committed migration history. The current schema contains the `User` model described in the Milestone 0 report and the PostgreSQL-backed session table required for authentication. Additional application models and seed data will be added later.
 
 ## Standard local configuration
 

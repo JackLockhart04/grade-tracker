@@ -15,3 +15,12 @@ model User {
 
   @@map("users")
 }
+
+model Session {
+  sid    String   @id @db.VarChar(255)
+  sess   Json
+  expire DateTime @db.Timestamp(6)
+
+  @@index([expire], map: "sessions_expire_idx")
+  @@map("sessions")
+}

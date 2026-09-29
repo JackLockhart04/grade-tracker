@@ -46,7 +46,67 @@ h1 {
   font-size: clamp(2rem, 7vw, 3.5rem);
 }
 
-.card > p:last-child {
-  margin-bottom: 0;
+h2 {
+  margin: 1.5rem 0 1rem;
+}
+
+form {
+  display: grid;
+  gap: 0.65rem;
+}
+
+label {
+  margin-top: 0.5rem;
+  font-weight: 700;
+}
+
+input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #aeb9c9;
+  border-radius: 0.5rem;
+  color: inherit;
+  font: inherit;
+}
+
+input:focus {
+  border-color: #315ea8;
+  outline: 3px solid rgb(49 94 168 / 20%);
+}
+
+button {
+  margin-top: 0.75rem;
+  padding: 0.75rem 1rem;
+  border: 0;
+  border-radius: 0.5rem;
+  background: #244f91;
+  color: #ffffff;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+}
+
+button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.link-button {
+  padding-left: 0;
+  background: transparent;
+  color: #244f91;
+  text-align: left;
+  text-decoration: underline;
+}
+
+.field-help,
+.muted {
+  margin: 0;
   color: #526078;
+}
+
+.error {
+  margin: 0.5rem 0 0;
+  color: #a51d2d;
+  font-weight: 600;
 }
