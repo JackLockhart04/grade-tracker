@@ -90,6 +90,29 @@ All assignment routes require an authenticated session and only expose assignmen
 
 Assignment names are required. Earned points must be zero or greater, possible points must be greater than zero, and both accept up to two decimal places. Earned points may exceed possible points for extra credit. Deleting a category or course also deletes all assignments beneath it.
 
+## Grade calculations
+
+Grade values are calculated when course data is requested; they are not stored separately in the database.
+
+- A category average is `total earned points / total possible points × 100`.
+- A current course average is the weighted average of categories containing assignments.
+- Categories without assignments are excluded instead of being treated as zero. The remaining graded weights are normalized to 100% for the current average.
+- The API returns each graded category's normalized `effectiveWeightPercentage` and its `currentGradeContribution` in percentage points.
+- A course without graded assignments has no current average and is excluded from cumulative GPA.
+- Cumulative GPA is `sum(grade points × credit hours) / graded credit hours`.
+
+The standard grade-point scale is:
+
+| Current average | Letter | Grade points |
+|-----------------|--------|--------------|
+| 90% or higher | A | 4.0 |
+| 80–89.99% | B | 3.0 |
+| 70–79.99% | C | 2.0 |
+| 60–69.99% | D | 1.0 |
+| Below 60% | F | 0.0 |
+
+Extra credit can raise a course average above 100%, but grade points remain capped at 4.0. Displayed calculations are rounded to two decimal places. Until all work is entered, the interface labels the result as a current grade rather than a final grade.
+
 ## Branching
 
 `main` is production. Work goes on feature branches and gets merged with a pull request. Every PR needs approval from the other team member.

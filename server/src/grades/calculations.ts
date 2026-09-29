@@ -65,6 +65,24 @@ export function calculateCourseGrade(categories: CategoryGrade[]) {
     (total, category) => total + category.weightPercentage,
     0,
   );
+  const categoryBreakdown = categories.map((category) => {
+    if (category.averagePercentage === null || gradedWeightPercentage === 0) {
+      return {
+        effectiveWeightPercentage: null,
+        currentGradeContribution: null,
+      };
+    }
+
+    const effectiveWeightPercentage =
+      (category.weightPercentage / gradedWeightPercentage) * 100;
+
+    return {
+      effectiveWeightPercentage: roundToHundredths(effectiveWeightPercentage),
+      currentGradeContribution: roundToHundredths(
+        category.averagePercentage * (effectiveWeightPercentage / 100),
+      ),
+    };
+  });
 
   if (gradedWeightPercentage === 0) {
     return {
@@ -72,6 +90,7 @@ export function calculateCourseGrade(categories: CategoryGrade[]) {
       gradedWeightPercentage: 0,
       letterGrade: null,
       gradePoints: null,
+      categoryBreakdown,
     };
   }
 
@@ -89,6 +108,7 @@ export function calculateCourseGrade(categories: CategoryGrade[]) {
     currentAveragePercentage,
     gradedWeightPercentage: roundToHundredths(gradedWeightPercentage),
     ...scale,
+    categoryBreakdown,
   };
 }
 

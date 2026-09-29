@@ -19,6 +19,8 @@ type Category = {
   earnedPointsTotal: number;
   possiblePointsTotal: number;
   averagePercentage: number | null;
+  effectiveWeightPercentage: number | null;
+  currentGradeContribution: number | null;
 };
 
 type Course = {
@@ -462,6 +464,66 @@ function CourseDetail({
           </>
         )}
       </div>
+
+      {course.categories.length > 0 && (
+        <section className="grade-breakdown" aria-labelledby="grade-breakdown-heading">
+          <h3 id="grade-breakdown-heading">Current grade breakdown</h3>
+          <p className="muted">
+            This is a current grade, not a final grade. Categories without assignments are excluded,
+            and graded category weights are normalized to 100%.
+          </p>
+          {!course.configurationComplete && (
+            <p className="calculation-warning">
+              Category weights currently total {formatPercentage(course.totalWeight)}. Configure
+              100% before treating this as a complete course setup.
+            </p>
+          )}
+          <div className="grade-table-wrapper">
+            <table className="grade-table">
+              <thead>
+                <tr>
+                  <th scope="col">Category</th>
+                  <th scope="col">Average</th>
+                  <th scope="col">Course weight</th>
+                  <th scope="col">Current-grade share</th>
+                  <th scope="col">Contribution</th>
+                </tr>
+              </thead>
+              <tbody>
+                {course.categories.map((category) => (
+                  <tr key={category.id}>
+                    <th scope="row">{category.name}</th>
+                    <td>
+                      {category.averagePercentage === null
+                        ? "No grade"
+                        : formatPercentage(category.averagePercentage)}
+                    </td>
+                    <td>{formatPercentage(category.weightPercentage)}</td>
+                    <td>
+                      {category.effectiveWeightPercentage === null
+                        ? "—"
+                        : formatPercentage(category.effectiveWeightPercentage)}
+                    </td>
+                    <td>
+                      {category.currentGradeContribution === null
+                        ? "—"
+                        : `${category.currentGradeContribution.toFixed(2)} points`}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+              {course.currentAveragePercentage !== null && (
+                <tfoot>
+                  <tr>
+                    <th scope="row" colSpan={4}>Current course average</th>
+                    <td>{formatPercentage(course.currentAveragePercentage)}</td>
+                  </tr>
+                </tfoot>
+              )}
+            </table>
+          </div>
+        </section>
+      )}
 
       <h2>Categories</h2>
       {course.categories.length === 0 ? (

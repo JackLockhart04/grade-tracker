@@ -126,14 +126,18 @@ function serializeCourse(course: {
   const totalWeight = Math.round(
     categories.reduce((total, category) => total + category.weightPercentage, 0) * 100,
   ) / 100;
-  const grade = calculateCourseGrade(categories);
+  const { categoryBreakdown, ...grade } = calculateCourseGrade(categories);
+  const categoriesWithBreakdown = categories.map((category, index) => ({
+    ...category,
+    ...categoryBreakdown[index],
+  }));
 
   return {
     id: course.id,
     name: course.name,
     term: course.term,
     creditHours: numberValue(course.creditHours),
-    categories,
+    categories: categoriesWithBreakdown,
     totalWeight,
     configurationComplete: totalWeight === 100,
     ...grade,

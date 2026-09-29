@@ -150,6 +150,63 @@ body {
   color: #526078;
 }
 
+.grade-breakdown {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  border: 1px solid #d9e0ea;
+  border-radius: 0.75rem;
+}
+
+.grade-breakdown h3 {
+  margin: 0 0 0.5rem;
+}
+
+.calculation-warning {
+  margin: 0.75rem 0 0;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  background: #fff2d8;
+  color: #704b00;
+  font-weight: 600;
+}
+
+.grade-table-wrapper {
+  overflow-x: auto;
+  margin-top: 1rem;
+}
+
+.grade-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.grade-table th,
+.grade-table td {
+  padding: 0.65rem;
+  border-bottom: 1px solid #d9e0ea;
+  text-align: right;
+}
+
+.grade-table th:first-child,
+.grade-table td:first-child {
+  text-align: left;
+}
+
+.grade-table thead th {
+  color: #526078;
+  font-size: 0.8rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.grade-table tfoot th,
+.grade-table tfoot td {
+  border-bottom: 0;
+  font-weight: 800;
+}
+
 .form-grid,
 .category-row,
 .category-editor {
