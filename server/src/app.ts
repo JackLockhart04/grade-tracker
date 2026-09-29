@@ -1,7 +1,9 @@
 import express, { type NextFunction, type Request, type Response } from "express";
+import { requireAuthentication } from "./auth/require-authentication.js";
 import { createAuthRouter } from "./auth/router.js";
 import { createSessionMiddleware } from "./auth/session.js";
 import { environment } from "./config/environment.js";
+import { createCourseRouter } from "./courses/router.js";
 import { checkDatabase as defaultCheckDatabase } from "./database/readiness.js";
 
 type AppDependencies = {
@@ -38,6 +40,7 @@ export function createApp({
   });
 
   app.use("/api/auth", createAuthRouter());
+  app.use("/api", requireAuthentication, createCourseRouter());
 
   app.use(
     (error: unknown, _request: Request, response: Response, _next: NextFunction) => {

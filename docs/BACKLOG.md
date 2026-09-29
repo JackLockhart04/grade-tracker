@@ -5,7 +5,7 @@
 | ID | User Story | Priority | Points | Status | Notes |
 |----|------------|----------|--------|--------|-------|
 | US-01 | As a student, I want to create an account and log in securely... | High | 3 | Done | Argon2id passwords and PostgreSQL sessions |
-| US-02 | As a student, I want to create courses and assign category weights... | High | 5 | Backlog | No checks for weights |
+| US-02 | As a student, I want to create courses and assign category weights... | High | 5 | Done | Allows incomplete totals; rejects totals over 100% |
 | US-03 | As a student, I want to enter assignment grades with earned and total points... | High | 5 | Backlog | Grade logging modal/form |
 | US-04 | As a student, I want automated calculation of class averages and cumulative GPA... | High | 5 | Backlog | Standard 4.0 scale |
 | US-05 | As a student, I want to use a "what-if" calculator for hypothetical grades... | High | 5 | Backlog | In-memory calculation, non-persisted |
