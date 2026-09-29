@@ -70,9 +70,75 @@ body {
 }
 
 .form-grid,
-.category-row {
+.category-row,
+.category-editor {
   display: grid;
   gap: 0.75rem;
+}
+
+.assignment-section {
+  margin-top: 0.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #d9e0ea;
+}
+
+.assignment-section h4 {
+  margin: 0 0 0.75rem;
+}
+
+.assignment-list {
+  display: grid;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.assignment-card {
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  background: #f4f7fb;
+}
+
+.assignment-card-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.assignment-card-main strong {
+  white-space: nowrap;
+}
+
+.assignment-actions button,
+.assignment-edit-form button {
+  margin-top: 0;
+}
+
+.assignment-actions {
+  margin-top: 0.75rem;
+}
+
+.assignment-edit-form {
+  display: grid;
+  grid-template-columns: minmax(10rem, 2fr) minmax(8rem, 1fr) minmax(8rem, 1fr);
+  gap: 0.75rem;
+}
+
+.assignment-edit-form .row-actions,
+.assignment-edit-form .error {
+  grid-column: 1 / -1;
+}
+
+.assignment-form {
+  display: grid;
+  grid-template-columns: minmax(10rem, 2fr) minmax(8rem, 1fr) minmax(8rem, 1fr) auto;
+  align-items: end;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.assignment-form button {
+  margin-bottom: 0;
 }
 
 .row-actions {
@@ -83,6 +149,12 @@ body {
 
 .danger-button {
   background: #a51d2d;
+}
+
+.secondary-button {
+  border: 1px solid #738098;
+  background: #ffffff;
+  color: #263650;
 }
 
 .weight-summary {
@@ -203,5 +275,15 @@ button:disabled {
   .dashboard-header {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .assignment-card-main {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .assignment-form,
+  .assignment-edit-form {
+    grid-template-columns: 1fr;
   }
 }

@@ -4,10 +4,18 @@ type User = {
   email: string;
 };
 
+type Assignment = {
+  id: string;
+  name: string;
+  earnedPoints: number;
+  possiblePoints: number;
+};
+
 type Category = {
   id: string;
   name: string;
   weightPercentage: number;
+  assignments: Assignment[];
 };
 
 type Course = {
@@ -25,6 +33,7 @@ type ApiResponse = {
   course?: Course;
   courses?: Course[];
   category?: Category;
+  assignment?: Assignment;
   error?: string;
 };
 
@@ -39,6 +48,141 @@ async function apiRequest(path: string, options?: RequestInit): Promise<ApiRespo
   return body;
 }
 
+function AssignmentRow({
+  assignment,
+  onChanged,
+}: {
+  assignment: Assignment;
+  onChanged: () => Promise<void>;
+}) {
+  const [editing, setEditing] = useState(false);
+  const [name, setName] = useState(assignment.name);
+  const [earnedPoints, setEarnedPoints] = useState(String(assignment.earnedPoints));
+  const [possiblePoints, setPossiblePoints] = useState(String(assignment.possiblePoints));
+  const [error, setError] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
+  useEffect(() => {
+    setName(assignment.name);
+    setEarnedPoints(String(assignment.earnedPoints));
+    setPossiblePoints(String(assignment.possiblePoints));
+  }, [assignment.name, assignment.earnedPoints, assignment.possiblePoints]);
+
+  function cancelEditing() {
+    setName(assignment.name);
+    setEarnedPoints(String(assignment.earnedPoints));
+    setPossiblePoints(String(assignment.possiblePoints));
+    setError("");
+    setEditing(false);
+  }
+
+  async function save(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    try {
+      setError("");
+      setSaving(true);
+      await apiRequest(`/api/assignments/${assignment.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          earnedPoints: Number(earnedPoints),
+          possiblePoints: Number(possiblePoints),
+        }),
+      });
+      await onChanged();
+      setEditing(false);
+    } catch (requestError) {
+      setError(requestError instanceof Error ? requestError.message : "Unable to save assignment.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function remove() {
+    if (!window.confirm(`Delete “${assignment.name}”? This cannot be undone.`)) {
+      return;
+    }
+
+    try {
+      setError("");
+      setDeleting(true);
+      await apiRequest(`/api/assignments/${assignment.id}`, { method: "DELETE" });
+      await onChanged();
+    } catch (requestError) {
+      setError(requestError instanceof Error ? requestError.message : "Unable to delete assignment.");
+      setDeleting(false);
+    }
+  }
+
+  if (editing) {
+    return (
+      <article className="assignment-card">
+        <form className="assignment-edit-form" onSubmit={save}>
+          <label>
+            Assignment name
+            <input
+              value={name}
+              maxLength={150}
+              onChange={(event) => setName(event.target.value)}
+              required
+            />
+          </label>
+          <label>
+            Points earned
+            <input
+              type="number"
+              min="0"
+              max="99999999.99"
+              step="0.01"
+              value={earnedPoints}
+              onChange={(event) => setEarnedPoints(event.target.value)}
+              required
+            />
+          </label>
+          <label>
+            Points possible
+            <input
+              type="number"
+              min="0.01"
+              max="99999999.99"
+              step="0.01"
+              value={possiblePoints}
+              onChange={(event) => setPossiblePoints(event.target.value)}
+              required
+            />
+          </label>
+          <div className="row-actions">
+            <button type="submit" disabled={saving}>{saving ? "Saving..." : "Save"}</button>
+            <button type="button" className="secondary-button" onClick={cancelEditing} disabled={saving}>
+              Cancel
+            </button>
+          </div>
+          {error && <p className="error" role="alert">{error}</p>}
+        </form>
+      </article>
+    );
+  }
+
+  return (
+    <article className="assignment-card">
+      <div className="assignment-card-main">
+        <span>{assignment.name}</span>
+        <strong>{assignment.earnedPoints} / {assignment.possiblePoints} points</strong>
+      </div>
+      <div className="row-actions assignment-actions">
+        <button type="button" onClick={() => setEditing(true)}>Edit</button>
+        <button type="button" className="danger-button" onClick={remove} disabled={deleting}>
+          {deleting ? "Deleting..." : "Delete"}
+        </button>
+      </div>
+      {error && <p className="error" role="alert">{error}</p>}
+    </article>
+  );
+}
+
 function CategoryRow({
   category,
   onChanged,
@@ -49,6 +193,8 @@ function CategoryRow({
   const [name, setName] = useState(category.name);
   const [weight, setWeight] = useState(String(category.weightPercentage));
   const [error, setError] = useState("");
+  const [assignmentError, setAssignmentError] = useState("");
+  const [addingAssignment, setAddingAssignment] = useState(false);
 
   async function save() {
     try {
@@ -65,7 +211,7 @@ function CategoryRow({
   }
 
   async function remove() {
-    if (!window.confirm(`Delete the ${category.name} category?`)) {
+    if (!window.confirm(`Delete the ${category.name} category and all of its assignments?`)) {
       return;
     }
 
@@ -77,28 +223,111 @@ function CategoryRow({
     }
   }
 
+  async function addAssignment(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const data = new FormData(form);
+
+    try {
+      setAssignmentError("");
+      setAddingAssignment(true);
+      await apiRequest(`/api/categories/${category.id}/assignments`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: data.get("assignmentName"),
+          earnedPoints: Number(data.get("earnedPoints")),
+          possiblePoints: Number(data.get("possiblePoints")),
+        }),
+      });
+      form.reset();
+      await onChanged();
+    } catch (requestError) {
+      setAssignmentError(
+        requestError instanceof Error ? requestError.message : "Unable to add assignment.",
+      );
+    } finally {
+      setAddingAssignment(false);
+    }
+  }
+
   return (
     <div className="category-row">
-      <label>
-        Category name
-        <input value={name} maxLength={100} onChange={(event) => setName(event.target.value)} />
-      </label>
-      <label>
-        Weight (%)
-        <input
-          type="number"
-          min="0.01"
-          max="100"
-          step="0.01"
-          value={weight}
-          onChange={(event) => setWeight(event.target.value)}
-        />
-      </label>
-      <div className="row-actions">
-        <button type="button" onClick={save}>Save</button>
-        <button type="button" className="danger-button" onClick={remove}>Delete</button>
+      <div className="category-editor">
+        <label>
+          Category name
+          <input value={name} maxLength={100} onChange={(event) => setName(event.target.value)} />
+        </label>
+        <label>
+          Weight (%)
+          <input
+            type="number"
+            min="0.01"
+            max="100"
+            step="0.01"
+            value={weight}
+            onChange={(event) => setWeight(event.target.value)}
+          />
+        </label>
+        <div className="row-actions">
+          <button type="button" onClick={save}>Save</button>
+          <button type="button" className="danger-button" onClick={remove}>Delete</button>
+        </div>
+        {error && <p className="error" role="alert">{error}</p>}
       </div>
-      {error && <p className="error" role="alert">{error}</p>}
+
+      <section className="assignment-section" aria-labelledby={`assignments-${category.id}`}>
+        <h4 id={`assignments-${category.id}`}>Assignments</h4>
+        {category.assignments.length === 0 ? (
+          <p className="muted">No assignments in this category yet.</p>
+        ) : (
+          <div className="assignment-list">
+            {category.assignments.map((assignment) => (
+              <AssignmentRow key={assignment.id} assignment={assignment} onChanged={onChanged} />
+            ))}
+          </div>
+        )}
+
+        <form
+          className="assignment-form"
+          aria-describedby={`assignment-help-${category.id}`}
+          onSubmit={addAssignment}
+        >
+          <label>
+            Assignment name
+            <input name="assignmentName" maxLength={150} required />
+          </label>
+          <label>
+            Points earned
+            <input
+              name="earnedPoints"
+              type="number"
+              min="0"
+              max="99999999.99"
+              step="0.01"
+              required
+            />
+          </label>
+          <label>
+            Points possible
+            <input
+              name="possiblePoints"
+              type="number"
+              min="0.01"
+              max="99999999.99"
+              step="0.01"
+              required
+            />
+          </label>
+          <button type="submit" disabled={addingAssignment}>
+            {addingAssignment ? "Adding..." : "Add assignment"}
+          </button>
+        </form>
+        <p className="field-help" id={`assignment-help-${category.id}`}>
+          Use up to two decimal places. Earned points may exceed possible points for extra credit.
+        </p>
+        {assignmentError && <p className="error" role="alert">{assignmentError}</p>}
+      </section>
     </div>
   );
 }
@@ -276,7 +505,7 @@ export function Dashboard({ user, onLogout }: { user: User; onLogout: () => Prom
   }
 
   async function deleteCourse(course: Course) {
-    if (!window.confirm(`Delete ${course.name} and all of its categories?`)) {
+    if (!window.confirm(`Delete ${course.name}, its categories, and all assignments?`)) {
       return;
     }
 

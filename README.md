@@ -46,7 +46,7 @@ npm start
 
 `npm start` runs the compiled server and requires `npm run build` first. Verify the API at `GET /api/health`; a healthy server returns `{ "status": "ok" }`. `GET /api/ready` also checks the PostgreSQL connection and returns `{ "status": "ready" }` when the database is available.
 
-The database currently contains the `User` model described in the Milestone 0 report and a session table for authentication. Registration and login use Argon2id password hashes and server-side sessions stored in PostgreSQL. Follow the [local database development guide](docs/local-database-development.md) for setup, migrations, verification, shutdown, reset, and troubleshooting instructions.
+The database contains users, courses, weighted categories, assignments, and server-side sessions. Registration and login use Argon2id password hashes and sessions stored in PostgreSQL. Follow the [local database development guide](docs/local-database-development.md) for setup, migrations, verification, shutdown, reset, and troubleshooting instructions.
 
 ## Authentication API
 
@@ -67,7 +67,7 @@ All course and category routes require an authenticated session.
 |--------|----------|---------|
 | `GET` | `/api/courses` | List the signed-in student's courses |
 | `POST` | `/api/courses` | Create a course |
-| `GET` | `/api/courses/:courseId` | Read a course and its categories |
+| `GET` | `/api/courses/:courseId` | Read a course, its categories, and their assignments |
 | `PATCH` | `/api/courses/:courseId` | Update a course |
 | `DELETE` | `/api/courses/:courseId` | Delete a course and its categories |
 | `POST` | `/api/courses/:courseId/categories` | Add a weighted category |
@@ -75,6 +75,20 @@ All course and category routes require an authenticated session.
 | `DELETE` | `/api/categories/:categoryId` | Delete a category |
 
 A course can be saved while its category weights total less than 100%. The API rejects any category change that would make the total exceed 100%.
+
+## Assignment API
+
+All assignment routes require an authenticated session and only expose assignments belonging to the signed-in student.
+
+| Method | Endpoint | Purpose |
+|--------|----------|---------|
+| `GET` | `/api/categories/:categoryId/assignments` | List a category's assignments |
+| `POST` | `/api/categories/:categoryId/assignments` | Add an assignment to a category |
+| `GET` | `/api/assignments/:assignmentId` | Read an assignment |
+| `PATCH` | `/api/assignments/:assignmentId` | Update an assignment |
+| `DELETE` | `/api/assignments/:assignmentId` | Delete an assignment |
+
+Assignment names are required. Earned points must be zero or greater, possible points must be greater than zero, and both accept up to two decimal places. Earned points may exceed possible points for extra credit. Deleting a category or course also deletes all assignments beneath it.
 
 ## Branching
 
