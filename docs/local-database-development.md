@@ -2,7 +2,7 @@
 
 This guide is the shared source of truth for running Grade Tracker's PostgreSQL database during local development. Both team members should follow the same steps and use the repository's `compose.yaml` rather than creating separate PostgreSQL configurations.
 
-The container currently provides an empty PostgreSQL database. Prisma, application tables, migrations, and seed data will be added in a later implementation step.
+Prisma manages the application schema and committed migration history. The initial schema contains only the `User` model described in the Milestone 0 report. Additional models and seed data will be added later.
 
 ## Standard local configuration
 
@@ -81,19 +81,25 @@ Run all commands from the repository root.
    docker compose ps
    ```
 
-6. Verify that PostgreSQL accepts a connection:
+6. Apply the committed Prisma migrations and generate the Prisma client:
+
+   ```bash
+   npm run db:migrate
+   ```
+
+7. Verify that PostgreSQL accepts a connection:
 
    ```bash
    docker compose exec postgres psql -U postgres -d grade_tracker -c "SELECT current_database(), current_user;"
    ```
 
-7. Start the application:
+8. Start the application:
 
    ```bash
    npm run dev
    ```
 
-Following these steps should give both developers the same PostgreSQL version, database name, user, and connection settings.
+Following these steps should give both developers the same PostgreSQL version, application schema, database name, user, and connection settings.
 
 ## Normal daily workflow
 
@@ -120,19 +126,24 @@ Stopping the container does not delete the database. Docker stores its data in a
 | `npm run db:stop` | Stop the containers without deleting their data |
 | `npm run db:logs` | Follow PostgreSQL startup and error logs |
 | `npm run db:status` | Show the PostgreSQL container and health status |
+| `npm run db:generate` | Generate the typed Prisma client from the schema |
+| `npm run db:migrate` | Apply committed migrations and create a development migration when the schema changes |
+| `npm run db:deploy` | Apply committed migrations without creating new ones; intended for deployment |
+| `npm run db:studio` | Open Prisma Studio to inspect local data |
 | `docker compose ps` | Show container and health status |
 
 ## Updating after pulling database changes
 
-For the current container-only setup:
+When another team member commits a Prisma migration:
 
 ```bash
 git pull
 npm install
 npm run db:start
+npm run db:migrate
 ```
 
-After Prisma is added, this section will also include the migration command. Do not manually create application tables in the meantime.
+Do not edit an already-shared migration. Create a new migration for later schema changes so every environment has the same migration history.
 
 ## Resetting the local database
 
@@ -143,6 +154,7 @@ Only reset when sample data can be recreated safely:
 ```bash
 docker compose down -v
 npm run db:start
+npm run db:migrate
 ```
 
 The `-v` option deletes the named database volume. Do not include it during normal shutdown.
@@ -176,7 +188,7 @@ Check the following in order:
 2. `docker compose ps` reports the `postgres` service as healthy.
 3. `.env` exists in the repository root.
 4. `DATABASE_URL` matches the standard local connection URL.
-5. Port `5432` is not being used by another local service.
+5. The Prisma migrations have been applied.
 
 Then review the database logs:
 
@@ -186,7 +198,7 @@ npm run db:logs
 
 ### The schema differs between teammates
 
-Schema management will begin when Prisma is added. Until then, the shared database should remain empty and application tables should not be created manually.
+Confirm both developers are on the same Git commit, run `npm install`, and apply all committed migrations. Do not manually change tables through Prisma Studio or a SQL client.
 
 ## Team rules
 

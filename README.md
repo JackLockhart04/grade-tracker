@@ -30,6 +30,7 @@ Requires Node.js 24 or newer.
 ```bash
 npm install
 npm run db:start
+npm run db:migrate
 npm run dev
 ```
 
@@ -43,9 +44,9 @@ npm test
 npm start
 ```
 
-`npm start` runs the compiled server and requires `npm run build` first. Verify the API at `GET /api/health`; a healthy server returns `{ "status": "ok" }`.
+`npm start` runs the compiled server and requires `npm run build` first. Verify the API at `GET /api/health`; a healthy server returns `{ "status": "ok" }`. `GET /api/ready` also checks the PostgreSQL connection and returns `{ "status": "ready" }` when the database is available.
 
-The Docker PostgreSQL container starts with an empty `grade_tracker` database. Follow the [local database development guide](docs/local-database-development.md) for setup, verification, shutdown, reset, and troubleshooting instructions.
+The initial Prisma migration creates only the `User` model described in the Milestone 0 report. Follow the [local database development guide](docs/local-database-development.md) for setup, migrations, verification, shutdown, reset, and troubleshooting instructions.
 
 ## Branching
 
