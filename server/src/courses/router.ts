@@ -54,6 +54,28 @@ function numberValue(value: { toString(): string }): number {
   return Number(value.toString());
 }
 
+type AssignmentData = {
+  id: string;
+  categoryId: string;
+  name: string;
+  earnedPoints: { toString(): string };
+  possiblePoints: { toString(): string };
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+function serializeAssignment(assignment: AssignmentData) {
+  return {
+    id: assignment.id,
+    categoryId: assignment.categoryId,
+    name: assignment.name,
+    earnedPoints: numberValue(assignment.earnedPoints),
+    possiblePoints: numberValue(assignment.possiblePoints),
+    createdAt: assignment.createdAt.toISOString(),
+    updatedAt: assignment.updatedAt.toISOString(),
+  };
+}
+
 function serializeCategory(category: {
   id: string;
   courseId: string;
@@ -61,12 +83,14 @@ function serializeCategory(category: {
   weightPercentage: { toString(): string };
   createdAt: Date;
   updatedAt: Date;
+  assignments?: AssignmentData[];
 }) {
   return {
     id: category.id,
     courseId: category.courseId,
     name: category.name,
     weightPercentage: numberValue(category.weightPercentage),
+    assignments: (category.assignments ?? []).map(serializeAssignment),
     createdAt: category.createdAt.toISOString(),
     updatedAt: category.updatedAt.toISOString(),
   };
@@ -86,6 +110,7 @@ function serializeCourse(course: {
     weightPercentage: { toString(): string };
     createdAt: Date;
     updatedAt: Date;
+    assignments?: AssignmentData[];
   }>;
 }) {
   const categories = course.categories.map(serializeCategory);
@@ -115,6 +140,11 @@ const courseSelection = {
   updatedAt: true,
   categories: {
     orderBy: { createdAt: "asc" as const },
+    include: {
+      assignments: {
+        orderBy: { createdAt: "asc" as const },
+      },
+    },
   },
 };
 

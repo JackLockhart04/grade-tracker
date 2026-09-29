@@ -1,4 +1,5 @@
 import express, { type NextFunction, type Request, type Response } from "express";
+import { createAssignmentRouter } from "./assignments/router.js";
 import { requireAuthentication } from "./auth/require-authentication.js";
 import { createAuthRouter } from "./auth/router.js";
 import { createSessionMiddleware } from "./auth/session.js";
@@ -41,6 +42,7 @@ export function createApp({
 
   app.use("/api/auth", createAuthRouter());
   app.use("/api", requireAuthentication, createCourseRouter());
+  app.use("/api", requireAuthentication, createAssignmentRouter());
 
   app.use(
     (error: unknown, _request: Request, response: Response, _next: NextFunction) => {
