@@ -1,5 +1,10 @@
 import { Router } from "express";
 import { prisma } from "../database/prisma.js";
+import {
+  calculateCategoryGrade,
+  calculateCourseGrade,
+  calculateCumulativeGpa,
+} from "../grades/calculations.js";
 
 const maximumCourseNameLength = 150;
 const maximumTermLength = 100;
@@ -85,12 +90,16 @@ function serializeCategory(category: {
   updatedAt: Date;
   assignments?: AssignmentData[];
 }) {
+  const assignments = (category.assignments ?? []).map(serializeAssignment);
+  const grade = calculateCategoryGrade(assignments);
+
   return {
     id: category.id,
     courseId: category.courseId,
     name: category.name,
     weightPercentage: numberValue(category.weightPercentage),
-    assignments: (category.assignments ?? []).map(serializeAssignment),
+    assignments,
+    ...grade,
     createdAt: category.createdAt.toISOString(),
     updatedAt: category.updatedAt.toISOString(),
   };
@@ -117,6 +126,7 @@ function serializeCourse(course: {
   const totalWeight = Math.round(
     categories.reduce((total, category) => total + category.weightPercentage, 0) * 100,
   ) / 100;
+  const grade = calculateCourseGrade(categories);
 
   return {
     id: course.id,
@@ -126,6 +136,7 @@ function serializeCourse(course: {
     categories,
     totalWeight,
     configurationComplete: totalWeight === 100,
+    ...grade,
     createdAt: course.createdAt.toISOString(),
     updatedAt: course.updatedAt.toISOString(),
   };
@@ -165,7 +176,10 @@ export function createCourseRouter() {
         orderBy: { createdAt: "asc" },
       });
 
-      response.json({ courses: courses.map(serializeCourse) });
+      const serializedCourses = courses.map(serializeCourse);
+      const gpa = calculateCumulativeGpa(serializedCourses);
+
+      response.json({ courses: serializedCourses, ...gpa });
     } catch (error) {
       next(error);
     }
