@@ -8,7 +8,7 @@ A web app for students to enter their assignment grades, set category weights fo
 
 ## Status
 
-Milestone 0 (proposal). No code yet. First working version comes at Milestone 1. Each milestone gets a git tag (`milestone-0`, `milestone-1`, ...).
+Milestone 1 development. The repository contains a basic React and Express scaffold. Each milestone gets a git tag (`milestone-0`, `milestone-1`, ...).
 
 ## Planned stack
 
@@ -24,7 +24,24 @@ Milestone 0 (proposal). No code yet. First working version comes at Milestone 1.
 
 ## Setup
 
-Nothing to run yet. Setup instructions will be added with the Milestone 1 code.
+Requires Node.js 24 or newer.
+
+```bash
+npm install
+npm run dev
+```
+
+The React development server runs at `http://localhost:5173` and proxies `/api` requests to the Express server at `http://localhost:3000`.
+
+Other root commands:
+
+```bash
+npm run build
+npm test
+npm start
+```
+
+`npm start` runs the compiled server and requires `npm run build` first. Verify the API at `GET /api/health`; a healthy server returns `{ "status": "ok" }`.
 
 ## Branching
 
