@@ -12,8 +12,38 @@ model User {
   email        String   @unique @db.VarChar(320)
   passwordHash String   @map("password_hash") @db.VarChar(255)
   createdAt    DateTime @default(now()) @map("created_at")
+  courses      Course[]
 
   @@map("users")
+}
+
+model Course {
+  id          String     @id @default(uuid()) @map("course_id") @db.Uuid
+  userId      String     @map("user_id") @db.Uuid
+  name        String     @map("course_name") @db.VarChar(150)
+  term        String     @db.VarChar(100)
+  creditHours Decimal    @map("credit_hours") @db.Decimal(4, 1)
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  categories  Category[]
+
+  @@index([userId])
+  @@map("courses")
+}
+
+model Category {
+  id               String   @id @default(uuid()) @map("category_id") @db.Uuid
+  courseId         String   @map("course_id") @db.Uuid
+  name             String   @map("category_name") @db.VarChar(100)
+  weightPercentage Decimal  @map("weight_percentage") @db.Decimal(5, 2)
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+  course           Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([courseId, name])
+  @@index([courseId])
+  @@map("categories")
 }
 
 model Session {

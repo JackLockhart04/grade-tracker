@@ -1,4 +1,5 @@
 import { useEffect, useState, type FormEvent } from "react";
+import { Dashboard } from "./Dashboard";
 
 type User = {
   id: string;
@@ -81,20 +82,17 @@ function App() {
     return <main className="app-shell">Loading...</main>;
   }
 
+  if (user) {
+    return <Dashboard user={user} onLogout={handleLogout} />;
+  }
+
   return (
     <main className="app-shell">
       <section className="card">
         <p className="eyebrow">CS 415</p>
         <h1>Grade Tracker</h1>
 
-        {user ? (
-          <div>
-            <p>You are signed in as <strong>{user.email}</strong>.</p>
-            <p className="muted">The course dashboard will be added next.</p>
-            <button type="button" onClick={handleLogout}>Log out</button>
-          </div>
-        ) : (
-          <>
+        <>
             <h2>{mode === "login" ? "Log in" : "Create an account"}</h2>
             <form onSubmit={handleSubmit}>
               <label htmlFor="email">Email</label>
@@ -136,8 +134,7 @@ function App() {
                 ? "Need an account? Register"
                 : "Already have an account? Log in"}
             </button>
-          </>
-        )}
+        </>
       </section>
     </main>
   );

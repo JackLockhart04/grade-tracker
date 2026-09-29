@@ -59,6 +59,23 @@ The database currently contains the `User` model described in the Milestone 0 re
 
 Registration and login accept JSON containing `email` and `password`. Passwords must contain 12 to 128 characters. Authentication cookies are HTTP-only, use `SameSite=Lax`, and become secure cookies in production. Set a long, random `SESSION_SECRET` in every deployed environment.
 
+## Course API
+
+All course and category routes require an authenticated session.
+
+| Method | Endpoint | Purpose |
+|--------|----------|---------|
+| `GET` | `/api/courses` | List the signed-in student's courses |
+| `POST` | `/api/courses` | Create a course |
+| `GET` | `/api/courses/:courseId` | Read a course and its categories |
+| `PATCH` | `/api/courses/:courseId` | Update a course |
+| `DELETE` | `/api/courses/:courseId` | Delete a course and its categories |
+| `POST` | `/api/courses/:courseId/categories` | Add a weighted category |
+| `PATCH` | `/api/categories/:categoryId` | Update a category |
+| `DELETE` | `/api/categories/:categoryId` | Delete a category |
+
+A course can be saved while its category weights total less than 100%. The API rejects any category change that would make the total exceed 100%.
+
 ## Branching
 
 `main` is production. Work goes on feature branches and gets merged with a pull request. Every PR needs approval from the other team member.
