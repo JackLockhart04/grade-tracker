@@ -16,6 +16,11 @@ type Category = {
   name: string;
   weightPercentage: number;
   assignments: Assignment[];
+  earnedPointsTotal: number;
+  possiblePointsTotal: number;
+  averagePercentage: number | null;
+  effectiveWeightPercentage: number | null;
+  currentGradeContribution: number | null;
 };
 
 type Course = {
@@ -26,6 +31,10 @@ type Course = {
   categories: Category[];
   totalWeight: number;
   configurationComplete: boolean;
+  currentAveragePercentage: number | null;
+  gradedWeightPercentage: number;
+  letterGrade: "A" | "B" | "C" | "D" | "F" | null;
+  gradePoints: number | null;
   updatedAt: string;
 };
 
@@ -34,8 +43,14 @@ type ApiResponse = {
   courses?: Course[];
   category?: Category;
   assignment?: Assignment;
+  cumulativeGpa?: number | null;
+  gradedCreditHours?: number;
   error?: string;
 };
+
+function formatPercentage(value: number): string {
+  return `${value.toFixed(2)}%`;
+}
 
 async function apiRequest(path: string, options?: RequestInit): Promise<ApiResponse> {
   const response = await fetch(path, options);
@@ -276,6 +291,19 @@ function CategoryRow({
         {error && <p className="error" role="alert">{error}</p>}
       </div>
 
+      <div className="category-grade-summary">
+        {category.averagePercentage === null ? (
+          <strong>No grade yet</strong>
+        ) : (
+          <>
+            <strong>Current average: {formatPercentage(category.averagePercentage)}</strong>
+            <span>
+              {category.earnedPointsTotal} / {category.possiblePointsTotal} points
+            </span>
+          </>
+        )}
+      </div>
+
       <section className="assignment-section" aria-labelledby={`assignments-${category.id}`}>
         <h4 id={`assignments-${category.id}`}>Assignments</h4>
         {category.assignments.length === 0 ? (
@@ -415,6 +443,88 @@ function CourseDetail({
         {!course.configurationComplete && " — configuration is incomplete"}
       </div>
 
+      <div className="course-grade-summary">
+        {course.currentAveragePercentage === null ? (
+          <>
+            <span className="grade-value">No grade yet</span>
+            <p className="muted">Add an assignment grade to calculate the current average.</p>
+          </>
+        ) : (
+          <>
+            <div>
+              <span className="grade-value">{formatPercentage(course.currentAveragePercentage)}</span>
+              <span className="letter-grade" aria-label={`Letter grade ${course.letterGrade}`}>
+                {course.letterGrade}
+              </span>
+            </div>
+            <p className="muted">
+              Based on categories representing {formatPercentage(course.gradedWeightPercentage)} of
+              the course weight. Categories without graded assignments are not included.
+            </p>
+          </>
+        )}
+      </div>
+
+      {course.categories.length > 0 && (
+        <section className="grade-breakdown" aria-labelledby="grade-breakdown-heading">
+          <h3 id="grade-breakdown-heading">Current grade breakdown</h3>
+          <p className="muted">
+            This is a current grade, not a final grade. Categories without assignments are excluded,
+            and graded category weights are normalized to 100%.
+          </p>
+          {!course.configurationComplete && (
+            <p className="calculation-warning">
+              Category weights currently total {formatPercentage(course.totalWeight)}. Configure
+              100% before treating this as a complete course setup.
+            </p>
+          )}
+          <div className="grade-table-wrapper">
+            <table className="grade-table">
+              <thead>
+                <tr>
+                  <th scope="col">Category</th>
+                  <th scope="col">Average</th>
+                  <th scope="col">Course weight</th>
+                  <th scope="col">Current-grade share</th>
+                  <th scope="col">Contribution</th>
+                </tr>
+              </thead>
+              <tbody>
+                {course.categories.map((category) => (
+                  <tr key={category.id}>
+                    <th scope="row">{category.name}</th>
+                    <td>
+                      {category.averagePercentage === null
+                        ? "No grade"
+                        : formatPercentage(category.averagePercentage)}
+                    </td>
+                    <td>{formatPercentage(category.weightPercentage)}</td>
+                    <td>
+                      {category.effectiveWeightPercentage === null
+                        ? "—"
+                        : formatPercentage(category.effectiveWeightPercentage)}
+                    </td>
+                    <td>
+                      {category.currentGradeContribution === null
+                        ? "—"
+                        : `${category.currentGradeContribution.toFixed(2)} points`}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+              {course.currentAveragePercentage !== null && (
+                <tfoot>
+                  <tr>
+                    <th scope="row" colSpan={4}>Current course average</th>
+                    <td>{formatPercentage(course.currentAveragePercentage)}</td>
+                  </tr>
+                </tfoot>
+              )}
+            </table>
+          </div>
+        </section>
+      )}
+
       <h2>Categories</h2>
       {course.categories.length === 0 ? (
         <p className="muted">No categories yet. Add the first one below.</p>
@@ -446,12 +556,16 @@ function CourseDetail({
 export function Dashboard({ user, onLogout }: { user: User; onLogout: () => Promise<void> }) {
   const [courses, setCourses] = useState<Course[]>([]);
   const [selectedCourse, setSelectedCourse] = useState<Course>();
+  const [cumulativeGpa, setCumulativeGpa] = useState<number | null>(null);
+  const [gradedCreditHours, setGradedCreditHours] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   async function loadCourses() {
     const body = await apiRequest("/api/courses");
     setCourses(body.courses ?? []);
+    setCumulativeGpa(body.cumulativeGpa ?? null);
+    setGradedCreditHours(body.gradedCreditHours ?? 0);
   }
 
   async function refreshSelectedCourse() {
@@ -536,49 +650,80 @@ export function Dashboard({ user, onLogout }: { user: User; onLogout: () => Prom
           onChanged={refreshSelectedCourse}
         />
       ) : (
-        <div className="dashboard-grid">
-          <section className="dashboard-panel">
-            <h2>Your courses</h2>
-            {loading ? (
-              <p>Loading courses...</p>
-            ) : courses.length === 0 ? (
-              <p className="muted">You have not added any courses yet.</p>
-            ) : (
-              <div className="course-list">
-                {courses.map((course) => (
-                  <article className="course-card" key={course.id}>
-                    <h3>{course.name}</h3>
-                    <p>{course.term} · {course.creditHours} credit hours</p>
-                    <p>{course.totalWeight}% configured</p>
-                    <div className="row-actions">
-                      <button type="button" onClick={() => openCourse(course.id)}>Manage</button>
-                      <button type="button" className="danger-button" onClick={() => deleteCourse(course)}>Delete</button>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            )}
+        <>
+          <section className="gpa-summary" aria-label="Cumulative GPA">
+            <div>
+              <p className="eyebrow">Cumulative GPA</p>
+              <p className="gpa-value">
+                {loading ? "—" : cumulativeGpa === null ? "No GPA yet" : cumulativeGpa.toFixed(2)}
+              </p>
+            </div>
+            <p className="muted">
+              {gradedCreditHours > 0
+                ? `Based on ${gradedCreditHours} graded credit hours.`
+                : "Courses without grades are not included."}
+            </p>
           </section>
 
-          <section className="dashboard-panel">
-            <h2>Add course</h2>
-            <form className="form-grid" onSubmit={addCourse}>
-              <label>
-                Course name
-                <input name="courseName" maxLength={150} required />
-              </label>
-              <label>
-                Term
-                <input name="term" maxLength={100} placeholder="Fall 2026" required />
-              </label>
-              <label>
-                Credit hours
-                <input name="creditHours" type="number" min="0.5" max="30" step="0.5" required />
-              </label>
-              <button type="submit">Add course</button>
-            </form>
-          </section>
-        </div>
+          <div className="dashboard-grid">
+            <section className="dashboard-panel">
+              <h2>Your courses</h2>
+              {loading ? (
+                <p>Loading courses...</p>
+              ) : courses.length === 0 ? (
+                <p className="muted">You have not added any courses yet.</p>
+              ) : (
+                <div className="course-list">
+                  {courses.map((course) => (
+                    <article className="course-card" key={course.id}>
+                      <div className="course-card-heading">
+                        <h3>{course.name}</h3>
+                        {course.currentAveragePercentage === null ? (
+                          <span className="grade-badge empty">No grade yet</span>
+                        ) : (
+                          <span className="grade-badge">
+                            {formatPercentage(course.currentAveragePercentage)} · {course.letterGrade}
+                          </span>
+                        )}
+                      </div>
+                      <p>{course.term} · {course.creditHours} credit hours</p>
+                      <p>{course.totalWeight}% configured</p>
+                      {course.currentAveragePercentage !== null && (
+                        <p className="field-help">
+                          Based on categories representing {formatPercentage(course.gradedWeightPercentage)}
+                          of course weight.
+                        </p>
+                      )}
+                      <div className="row-actions">
+                        <button type="button" onClick={() => openCourse(course.id)}>Manage</button>
+                        <button type="button" className="danger-button" onClick={() => deleteCourse(course)}>Delete</button>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              )}
+            </section>
+
+            <section className="dashboard-panel">
+              <h2>Add course</h2>
+              <form className="form-grid" onSubmit={addCourse}>
+                <label>
+                  Course name
+                  <input name="courseName" maxLength={150} required />
+                </label>
+                <label>
+                  Term
+                  <input name="term" maxLength={100} placeholder="Fall 2026" required />
+                </label>
+                <label>
+                  Credit hours
+                  <input name="creditHours" type="number" min="0.5" max="30" step="0.5" required />
+                </label>
+                <button type="submit">Add course</button>
+              </form>
+            </section>
+          </div>
+        </>
       )}
 
       {error && <p className="error" role="alert">{error}</p>}

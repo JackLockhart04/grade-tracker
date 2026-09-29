@@ -43,6 +43,25 @@ body {
   gap: 1.5rem;
 }
 
+.gpa-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid #cbd8ec;
+  border-radius: 1rem;
+  background: #eaf1fc;
+}
+
+.gpa-value {
+  margin: 0.25rem 0 0;
+  color: #173f7a;
+  font-size: 2rem;
+  font-weight: 800;
+}
+
 .dashboard-panel {
   padding: 1.5rem;
   border: 1px solid #d9e0ea;
@@ -67,6 +86,125 @@ body {
 .course-card h3,
 .course-card p {
   margin: 0 0 0.5rem;
+}
+
+.course-card-heading,
+.category-grade-summary,
+.course-grade-summary > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.grade-badge,
+.letter-grade {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: #dce8fa;
+  color: #173f7a;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.grade-badge {
+  padding: 0.35rem 0.65rem;
+  font-size: 0.85rem;
+}
+
+.grade-badge.empty {
+  background: #e9edf3;
+  color: #526078;
+}
+
+.letter-grade {
+  width: 2.25rem;
+  height: 2.25rem;
+  font-size: 1.1rem;
+}
+
+.grade-value {
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+.course-grade-summary {
+  display: grid;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  border: 1px solid #cbd8ec;
+  border-radius: 0.75rem;
+  background: #f3f7fd;
+}
+
+.category-grade-summary {
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  background: #f4f7fb;
+}
+
+.category-grade-summary span {
+  color: #526078;
+}
+
+.grade-breakdown {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  border: 1px solid #d9e0ea;
+  border-radius: 0.75rem;
+}
+
+.grade-breakdown h3 {
+  margin: 0 0 0.5rem;
+}
+
+.calculation-warning {
+  margin: 0.75rem 0 0;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  background: #fff2d8;
+  color: #704b00;
+  font-weight: 600;
+}
+
+.grade-table-wrapper {
+  overflow-x: auto;
+  margin-top: 1rem;
+}
+
+.grade-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.grade-table th,
+.grade-table td {
+  padding: 0.65rem;
+  border-bottom: 1px solid #d9e0ea;
+  text-align: right;
+}
+
+.grade-table th:first-child,
+.grade-table td:first-child {
+  text-align: left;
+}
+
+.grade-table thead th {
+  color: #526078;
+  font-size: 0.8rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.grade-table tfoot th,
+.grade-table tfoot td {
+  border-bottom: 0;
+  font-weight: 800;
 }
 
 .form-grid,
@@ -273,6 +411,13 @@ button:disabled {
   }
 
   .dashboard-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .gpa-summary,
+  .course-card-heading,
+  .category-grade-summary {
     align-items: flex-start;
     flex-direction: column;
   }
