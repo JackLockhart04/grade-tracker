@@ -4,10 +4,18 @@ type User = {
   email: string;
 };
 
+type Assignment = {
+  id: string;
+  name: string;
+  earnedPoints: number;
+  possiblePoints: number;
+};
+
 type Category = {
   id: string;
   name: string;
   weightPercentage: number;
+  assignments: Assignment[];
 };
 
 type Course = {
@@ -25,6 +33,7 @@ type ApiResponse = {
   course?: Course;
   courses?: Course[];
   category?: Category;
+  assignment?: Assignment;
   error?: string;
 };
 
@@ -49,6 +58,8 @@ function CategoryRow({
   const [name, setName] = useState(category.name);
   const [weight, setWeight] = useState(String(category.weightPercentage));
   const [error, setError] = useState("");
+  const [assignmentError, setAssignmentError] = useState("");
+  const [addingAssignment, setAddingAssignment] = useState(false);
 
   async function save() {
     try {
@@ -77,28 +88,93 @@ function CategoryRow({
     }
   }
 
+  async function addAssignment(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const data = new FormData(form);
+
+    try {
+      setAssignmentError("");
+      setAddingAssignment(true);
+      await apiRequest(`/api/categories/${category.id}/assignments`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: data.get("assignmentName"),
+          earnedPoints: Number(data.get("earnedPoints")),
+          possiblePoints: Number(data.get("possiblePoints")),
+        }),
+      });
+      form.reset();
+      await onChanged();
+    } catch (requestError) {
+      setAssignmentError(
+        requestError instanceof Error ? requestError.message : "Unable to add assignment.",
+      );
+    } finally {
+      setAddingAssignment(false);
+    }
+  }
+
   return (
     <div className="category-row">
-      <label>
-        Category name
-        <input value={name} maxLength={100} onChange={(event) => setName(event.target.value)} />
-      </label>
-      <label>
-        Weight (%)
-        <input
-          type="number"
-          min="0.01"
-          max="100"
-          step="0.01"
-          value={weight}
-          onChange={(event) => setWeight(event.target.value)}
-        />
-      </label>
-      <div className="row-actions">
-        <button type="button" onClick={save}>Save</button>
-        <button type="button" className="danger-button" onClick={remove}>Delete</button>
+      <div className="category-editor">
+        <label>
+          Category name
+          <input value={name} maxLength={100} onChange={(event) => setName(event.target.value)} />
+        </label>
+        <label>
+          Weight (%)
+          <input
+            type="number"
+            min="0.01"
+            max="100"
+            step="0.01"
+            value={weight}
+            onChange={(event) => setWeight(event.target.value)}
+          />
+        </label>
+        <div className="row-actions">
+          <button type="button" onClick={save}>Save</button>
+          <button type="button" className="danger-button" onClick={remove}>Delete</button>
+        </div>
+        {error && <p className="error" role="alert">{error}</p>}
       </div>
-      {error && <p className="error" role="alert">{error}</p>}
+
+      <section className="assignment-section" aria-labelledby={`assignments-${category.id}`}>
+        <h4 id={`assignments-${category.id}`}>Assignments</h4>
+        {category.assignments.length === 0 ? (
+          <p className="muted">No assignments in this category yet.</p>
+        ) : (
+          <div className="assignment-list">
+            {category.assignments.map((assignment) => (
+              <article className="assignment-card" key={assignment.id}>
+                <span>{assignment.name}</span>
+                <strong>{assignment.earnedPoints} / {assignment.possiblePoints} points</strong>
+              </article>
+            ))}
+          </div>
+        )}
+
+        <form className="assignment-form" onSubmit={addAssignment}>
+          <label>
+            Assignment name
+            <input name="assignmentName" maxLength={150} required />
+          </label>
+          <label>
+            Points earned
+            <input name="earnedPoints" type="number" min="0" step="0.01" required />
+          </label>
+          <label>
+            Points possible
+            <input name="possiblePoints" type="number" min="0.01" step="0.01" required />
+          </label>
+          <button type="submit" disabled={addingAssignment}>
+            {addingAssignment ? "Adding..." : "Add assignment"}
+          </button>
+        </form>
+        {assignmentError && <p className="error" role="alert">{assignmentError}</p>}
+      </section>
     </div>
   );
 }
