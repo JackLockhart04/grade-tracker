@@ -20,6 +20,7 @@ Milestone 0 (proposal). No code yet. First working version comes at Milestone 1.
 
 - `docs/BACKLOG.md` - prioritized user stories
 - `docs/architecture-diagram.md` - architecture diagram (Mermaid)
+- `docs/adr/` - accepted architecture decision records
 
 ## Setup
 
