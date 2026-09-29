@@ -8,9 +8,9 @@ A web app for students to enter their assignment grades, set category weights fo
 
 ## Status
 
-Milestone 1 development. The repository contains a basic React and Express scaffold. Each milestone gets a git tag (`milestone-0`, `milestone-1`, ...).
+Milestone 1 working MVP. The application supports authentication, course/category setup, assignment grade management, weighted course averages, and cumulative GPA. The `milestone-1` tag will be created when the submission version is finalized.
 
-## Planned stack
+## Technology stack
 
 - Frontend: React
 - Backend: Node.js + Express
@@ -26,21 +26,80 @@ Milestone 1 development. The repository contains a basic React and Express scaff
 - `docs/component-designs.md` - detailed authentication and grade-entry designs
 - `docs/wireframes.md` - responsive, multi-screen UX wireframes
 - `docs/design-patterns.md` - implemented design patterns and rationale
+- `docs/verification-guide.md` - fresh-clone setup and Milestone 1 acceptance checks
 - `docs/adr/` - accepted architecture decision records
 - `docs/local-database-development.md` - shared Docker PostgreSQL development setup
 
 ## Setup
 
-Requires Node.js 24 or newer.
+### Requirements
+
+- Git
+- Node.js 24 or newer, including npm
+- Docker Desktop with Docker Compose
+
+Run all commands from the repository root. Docker Desktop must be started manually and report that its engine is running before starting the project database.
+
+### First-time setup
+
+1. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+2. Create the untracked local environment file:
+
+   PowerShell:
+
+   ```powershell
+   Copy-Item .env.example .env
+   ```
+
+   macOS or Linux:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+3. Replace the example `SESSION_SECRET` in `.env` with a long random value. Generate one with:
+
+   ```bash
+   node -e "console.log(require('node:crypto').randomBytes(32).toString('hex'))"
+   ```
+
+4. Confirm Docker is available, then start the local PostgreSQL container:
+
+   ```bash
+   docker --version
+   docker compose version
+   npm run db:start
+   ```
+
+5. Apply all committed database migrations:
+
+   ```bash
+   npm run db:migrate
+   ```
+
+6. Start the React and Express development servers:
+
+   ```bash
+   npm run dev
+   ```
+
+Open `http://localhost:5173`. The React server proxies `/api` requests to the Express server at `http://localhost:3000`.
+
+### Daily startup
+
+After the first setup, the normal workflow is:
 
 ```bash
-npm install
 npm run db:start
-npm run db:migrate
 npm run dev
 ```
 
-The React development server runs at `http://localhost:5173` and proxies `/api` requests to the Express server at `http://localhost:3000`.
+Stop the development servers with `Ctrl+C`. Use `npm run db:stop` when the local database is no longer needed; normal shutdown preserves its data.
 
 Other root commands:
 
@@ -52,7 +111,7 @@ npm start
 
 `npm start` runs the compiled server and requires `npm run build` first. Verify the API at `GET /api/health`; a healthy server returns `{ "status": "ok" }`. `GET /api/ready` also checks the PostgreSQL connection and returns `{ "status": "ready" }` when the database is available.
 
-The database contains users, courses, weighted categories, assignments, and server-side sessions. Registration and login use Argon2id password hashes and sessions stored in PostgreSQL. Follow the [local database development guide](docs/local-database-development.md) for setup, migrations, verification, shutdown, reset, and troubleshooting instructions.
+The database contains users, courses, weighted categories, assignments, and server-side sessions. Registration and login use Argon2id password hashes and sessions stored in PostgreSQL. Follow the [local database development guide](docs/local-database-development.md) for migrations, shutdown, reset, and troubleshooting. Follow the [Milestone 1 verification guide](docs/verification-guide.md) for the exact sample workflow and expected grade calculations.
 
 ## Authentication API
 

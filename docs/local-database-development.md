@@ -2,7 +2,7 @@
 
 This guide is the shared source of truth for running Grade Tracker's PostgreSQL database during local development. Both team members should follow the same steps and use the repository's `compose.yaml` rather than creating separate PostgreSQL configurations.
 
-Prisma manages the application schema and committed migration history. The current schema contains the `User` model described in the Milestone 0 report and the PostgreSQL-backed session table required for authentication. Additional application models and seed data will be added later.
+Prisma manages the application schema and committed migration history. The current schema contains users, courses, weighted categories, assignments, and the PostgreSQL-backed session table required for authentication. Grade summaries are calculated from assignment data and are not stored as separate database records.
 
 ## Standard local configuration
 
@@ -67,6 +67,12 @@ Run all commands from the repository root.
    DATABASE_URL=postgresql://postgres:postgres@localhost:5432/grade_tracker
    ```
 
+   Replace the example `SESSION_SECRET` with a long random value. One can be generated with:
+
+   ```bash
+   node -e "console.log(require('node:crypto').randomBytes(32).toString('hex'))"
+   ```
+
 4. Start PostgreSQL:
 
    ```bash
@@ -100,6 +106,23 @@ Run all commands from the repository root.
    ```
 
 Following these steps should give both developers the same PostgreSQL version, application schema, database name, user, and connection settings.
+
+## Partner and fresh-clone checklist
+
+Use this checklist when setting up a new computer or verifying that another team member can run the project:
+
+1. Clone the repository and switch to the intended branch or commit.
+2. Confirm Node.js 24 or newer with `node --version`.
+3. Run `npm install` from the repository root.
+4. Copy `.env.example` to `.env` and replace `SESSION_SECRET`.
+5. Start Docker Desktop manually and wait for the engine to become ready.
+6. Run `npm run db:start` and confirm the PostgreSQL health check succeeds.
+7. Run `npm run db:migrate` to apply every committed migration.
+8. Run `npm run build` and `npm test` once before beginning development.
+9. Run `npm run dev` and open `http://localhost:5173`.
+10. Confirm `http://localhost:3000/api/ready` returns `{ "status": "ready" }`.
+
+No shared demonstration account or preloaded seed data is required. Each developer registers a local account, and the sample values in the [Milestone 1 verification guide](verification-guide.md) can be entered through the interface.
 
 ## Normal daily workflow
 
