@@ -50,12 +50,14 @@ docker --version
 docker compose version
 npm run db:start
 npm run db:migrate
+npm run db:generate
 ```
 
 Expected results:
 
 - `npm run db:start` reports that the `postgres` service is healthy.
 - `npm run db:migrate` reports that the database schema is up to date after applying any pending committed migrations.
+- `npm run db:generate` creates the Prisma client required by the Express server.
 
 ## 3. Build and automated smoke checks
 

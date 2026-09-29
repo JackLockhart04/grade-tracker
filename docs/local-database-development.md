@@ -87,11 +87,14 @@ Run all commands from the repository root.
    docker compose ps
    ```
 
-6. Apply the committed Prisma migrations and generate the Prisma client:
+6. Apply the committed Prisma migrations, then generate the Prisma client:
 
    ```bash
    npm run db:migrate
+   npm run db:generate
    ```
+
+   Migrations update PostgreSQL but do not generate the client in the current Prisma version. The explicit generation step verifies that the client can be created; later `npm run dev` commands also generate it automatically.
 
 7. Verify that PostgreSQL accepts a connection:
 
@@ -118,9 +121,10 @@ Use this checklist when setting up a new computer or verifying that another team
 5. Start Docker Desktop manually and wait for the engine to become ready.
 6. Run `npm run db:start` and confirm the PostgreSQL health check succeeds.
 7. Run `npm run db:migrate` to apply every committed migration.
-8. Run `npm run build` and `npm test` once before beginning development.
-9. Run `npm run dev` and open `http://localhost:5173`.
-10. Confirm `http://localhost:3000/api/ready` returns `{ "status": "ready" }`.
+8. Run `npm run db:generate` to generate the Prisma client.
+9. Run `npm run build` and `npm test` once before beginning development.
+10. Run `npm run dev` and open `http://localhost:5173`.
+11. Confirm `http://localhost:3000/api/ready` returns `{ "status": "ready" }`.
 
 No shared demonstration account or preloaded seed data is required. Each developer registers a local account, and the sample values in the [Milestone 1 verification guide](verification-guide.md) can be entered through the interface.
 
@@ -132,6 +136,8 @@ Start the database before starting the application:
 npm run db:start
 npm run dev
 ```
+
+The server's `predev` lifecycle script generates the Prisma client automatically before development starts.
 
 Stop the application with `Ctrl+C`. Stop PostgreSQL when it is no longer needed:
 

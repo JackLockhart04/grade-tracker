@@ -86,7 +86,15 @@ Run all commands from the repository root. Docker Desktop must be started manual
    npm run db:migrate
    ```
 
-6. Start the React and Express development servers:
+6. Generate the Prisma client used by the Express server:
+
+   ```bash
+   npm run db:generate
+   ```
+
+   Prisma migrations update the database schema but do not generate the client in the current Prisma version.
+
+7. Start the React and Express development servers:
 
    ```bash
    npm run dev
@@ -103,6 +111,8 @@ npm run db:start
 npm run dev
 ```
 
+The server workspace automatically regenerates the Prisma client before its development server starts, so the daily workflow does not need a separate generation command.
+
 Stop the development servers with `Ctrl+C`. Use `npm run db:stop` when the local database is no longer needed; normal shutdown preserves its data.
 
 Other root commands:
@@ -116,6 +126,10 @@ npm start
 `npm start` runs the compiled server and requires `npm run build` first. Verify the API at `GET /api/health`; a healthy server returns `{ "status": "ok" }`. `GET /api/ready` also checks the PostgreSQL connection and returns `{ "status": "ready" }` when the database is available.
 
 The database contains users, courses, weighted categories, assignments, and server-side sessions. Registration and login use Argon2id password hashes and sessions stored in PostgreSQL. Follow the [local database development guide](docs/local-database-development.md) for migrations, shutdown, reset, and troubleshooting. Follow the [Milestone 1 verification guide](docs/verification-guide.md) for the exact sample workflow and expected grade calculations.
+
+### Dependency install-script policy
+
+npm blocks dependency install scripts unless the project explicitly approves them. The root `allowScripts` policy approves only the exact locked versions of `@prisma/engines`, `argon2`, `esbuild`, and `prisma`. Their scripts prepare Prisma's engine, build Argon2's native binding, select esbuild's platform binary, and validate Prisma's installation. Keeping these approvals version-pinned makes a fresh install reliable without enabling arbitrary dependency scripts. Review and update the approvals deliberately when upgrading one of these packages.
 
 ## Authentication API
 
