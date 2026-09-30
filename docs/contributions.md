@@ -1,6 +1,6 @@
 # Milestone 1 Team Contributions
 
-This file records each team member's contributions to the Milestone 1 submission. Both statements were reviewed by the team before submission.
+This file records each team member's contributions to the Milestone 1 submission.
 
 ## Jack Lockhart
 
