@@ -13,6 +13,7 @@ This file records repository-visible contributions for the Milestone 1 submissio
 
 - Contributed to early project planning and Milestone 0 documentation, and expanded the repository README during Milestone 0.
 - Ran the Milestone 1 verification guide and the Lighthouse, keyboard, zoom, and phone-width checks on a fresh clone, then fixed the four issues they found (dashboard layout shift, heading order, missing `robots.txt`, missing favicon) and recorded the results in [quality-checks.md](quality-checks.md).
+- Added the `npm run db:seed` demonstration data and the `npm run preview` command.
 - Wrote the Milestone 1 report.
 
 ## Shared responsibility
