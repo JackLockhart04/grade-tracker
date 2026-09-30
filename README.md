@@ -121,9 +121,10 @@ Other root commands:
 npm run build
 npm test
 npm start
+npm run preview
 ```
 
-`npm start` runs the compiled server and requires `npm run build` first. Verify the API at `GET /api/health`; a healthy server returns `{ "status": "ok" }`. `GET /api/ready` also checks the PostgreSQL connection and returns `{ "status": "ready" }` when the database is available.
+`npm start` runs the compiled server and requires `npm run build` first. The Express server only serves the API; `npm run preview` serves the compiled React client at `http://localhost:4173` and proxies `/api` to it. Verify the API at `GET /api/health`; a healthy server returns `{ "status": "ok" }`. `GET /api/ready` also checks the PostgreSQL connection and returns `{ "status": "ready" }` when the database is available.
 
 The database contains users, courses, weighted categories, assignments, and server-side sessions. Registration and login use Argon2id password hashes and sessions stored in PostgreSQL. Follow the [local database development guide](docs/local-database-development.md) for migrations, shutdown, reset, and troubleshooting. Follow the [Milestone 1 verification guide](docs/verification-guide.md) for the exact sample workflow and expected grade calculations.
 
