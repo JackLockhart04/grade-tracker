@@ -1,6 +1,6 @@
 # Milestone 1 Setup and Verification Guide
 
-This guide gives a teaching assistant or teammate a repeatable way to run and verify the exact Milestone 1 application. No account or sample data is preloaded; create the local demonstration account through the interface.
+This guide gives a teaching assistant or teammate a repeatable way to run and verify the exact Milestone 1 application. The full check below creates its data through the interface. For a quick look, `npm run db:seed` loads `demo@example.com` (password `DemoAccount2026!`) with the same three courses already entered; that account should show Software Engineering at 86.25% (B), Databases at 110.00% (A), History with no grade, and a cumulative GPA of 3.25.
 
 ## 1. Required software
 

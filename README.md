@@ -94,7 +94,15 @@ Run all commands from the repository root. Docker Desktop must be started manual
 
    Prisma migrations update the database schema but do not generate the client in the current Prisma version.
 
-7. Start the React and Express development servers:
+7. Optional: load the demonstration account and sample courses:
+
+   ```bash
+   npm run db:seed
+   ```
+
+   This creates `demo@example.com` with password `DemoAccount2026!` and the three sample courses from the verification guide. Running it again resets only that account.
+
+8. Start the React and Express development servers:
 
    ```bash
    npm run dev
