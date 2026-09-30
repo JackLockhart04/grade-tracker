@@ -1,6 +1,6 @@
 # Milestone 1 Team Contributions
 
-This file records repository-visible contributions for the Milestone 1 submission. Each team member should review and confirm their statement before the final submission because Git history does not capture planning meetings, testing performed on another computer, or other work completed outside the repository.
+This file records each team member's contributions to the Milestone 1 submission.
 
 ## Jack Lockhart
 
@@ -11,9 +11,10 @@ This file records repository-visible contributions for the Milestone 1 submissio
 
 ## Emanuel Melvin
 
-- Contributed to early project planning and Milestone 0 documentation.
-- Expanded the repository README during the Milestone 0 phase, as recorded in Git history.
-- **Before submission:** add any Milestone 1 design review, manual verification, implementation, or documentation work completed outside the current Git history, then confirm this statement with Emanuel.
+- Contributed to early project planning and Milestone 0 documentation, and expanded the repository README during Milestone 0.
+- Ran the Milestone 1 verification guide and the Lighthouse, keyboard, zoom, and phone-width checks on a fresh clone, then fixed the four issues they found (dashboard layout shift, heading order, missing `robots.txt`, missing favicon) and recorded the results in [quality-checks.md](quality-checks.md).
+- Added the `npm run db:seed` demonstration data and the `npm run preview` command.
+- Wrote the Milestone 1 report.
 
 ## Shared responsibility
 

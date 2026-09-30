@@ -8,7 +8,7 @@ A web app for students to enter their assignment grades, set category weights fo
 
 ## Status
 
-Milestone 1 working MVP. The application supports authentication, course/category setup, assignment grade management, weighted course averages, and cumulative GPA. The `milestone-1` tag will be created when the submission version is finalized.
+Milestone 1 working MVP. The application supports authentication, course/category setup, assignment grade management, weighted course averages, and cumulative GPA. The submitted version is tagged `milestone-1`.
 
 ## Technology stack
 
@@ -94,7 +94,15 @@ Run all commands from the repository root. Docker Desktop must be started manual
 
    Prisma migrations update the database schema but do not generate the client in the current Prisma version.
 
-7. Start the React and Express development servers:
+7. Optional: load the demonstration account and sample courses:
+
+   ```bash
+   npm run db:seed
+   ```
+
+   This creates `demo@example.com` with password `DemoAccount2026!` and the three sample courses from the verification guide. Running it again resets only that account.
+
+8. Start the React and Express development servers:
 
    ```bash
    npm run dev
@@ -121,9 +129,10 @@ Other root commands:
 npm run build
 npm test
 npm start
+npm run preview
 ```
 
-`npm start` runs the compiled server and requires `npm run build` first. Verify the API at `GET /api/health`; a healthy server returns `{ "status": "ok" }`. `GET /api/ready` also checks the PostgreSQL connection and returns `{ "status": "ready" }` when the database is available.
+`npm start` runs the compiled server and requires `npm run build` first. The Express server only serves the API; `npm run preview` serves the compiled React client at `http://localhost:4173` and proxies `/api` to it. Verify the API at `GET /api/health`; a healthy server returns `{ "status": "ok" }`. `GET /api/ready` also checks the PostgreSQL connection and returns `{ "status": "ready" }` when the database is available.
 
 The database contains users, courses, weighted categories, assignments, and server-side sessions. Registration and login use Argon2id password hashes and sessions stored in PostgreSQL. Follow the [local database development guide](docs/local-database-development.md) for migrations, shutdown, reset, and troubleshooting. Follow the [Milestone 1 verification guide](docs/verification-guide.md) for the exact sample workflow and expected grade calculations.
 

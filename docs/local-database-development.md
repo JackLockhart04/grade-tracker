@@ -126,7 +126,7 @@ Use this checklist when setting up a new computer or verifying that another team
 10. Run `npm run dev` and open `http://localhost:5173`.
 11. Confirm `http://localhost:3000/api/ready` returns `{ "status": "ready" }`.
 
-No shared demonstration account or preloaded seed data is required. Each developer registers a local account, and the sample values in the [Milestone 1 verification guide](verification-guide.md) can be entered through the interface.
+Seed data is optional. `npm run db:seed` creates the local account `demo@example.com` (password `DemoAccount2026!`) with the three sample courses from the [Milestone 1 verification guide](verification-guide.md). Running it again deletes and recreates only that account. The script refuses to run when `NODE_ENV` is `production`. Developers can also register their own account and enter the sample values through the interface.
 
 ## Normal daily workflow
 
