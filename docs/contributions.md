@@ -1,6 +1,6 @@
 # Milestone 1 Team Contributions
 
-This file records repository-visible contributions for the Milestone 1 submission. Each team member should review and confirm their statement before the final submission because Git history does not capture planning meetings, testing performed on another computer, or other work completed outside the repository.
+This file records each team member's contributions to the Milestone 1 submission. Both statements were reviewed by the team before submission.
 
 ## Jack Lockhart
 

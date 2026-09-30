@@ -8,7 +8,7 @@ A web app for students to enter their assignment grades, set category weights fo
 
 ## Status
 
-Milestone 1 working MVP. The application supports authentication, course/category setup, assignment grade management, weighted course averages, and cumulative GPA. The `milestone-1` tag will be created when the submission version is finalized.
+Milestone 1 working MVP. The application supports authentication, course/category setup, assignment grade management, weighted course averages, and cumulative GPA. The submitted version is tagged `milestone-1`.
 
 ## Technology stack
 
