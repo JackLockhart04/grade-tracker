@@ -305,7 +305,7 @@ function CategoryRow({
       </div>
 
       <section className="assignment-section" aria-labelledby={`assignments-${category.id}`}>
-        <h4 id={`assignments-${category.id}`}>Assignments</h4>
+        <h3 id={`assignments-${category.id}`}>Assignments</h3>
         {category.assignments.length === 0 ? (
           <p className="muted">No assignments in this category yet.</p>
         ) : (
@@ -665,64 +665,66 @@ export function Dashboard({ user, onLogout }: { user: User; onLogout: () => Prom
             </p>
           </section>
 
-          <div className="dashboard-grid">
-            <section className="dashboard-panel">
-              <h2>Your courses</h2>
-              {loading ? (
-                <p>Loading courses...</p>
-              ) : courses.length === 0 ? (
-                <p className="muted">You have not added any courses yet.</p>
-              ) : (
-                <div className="course-list">
-                  {courses.map((course) => (
-                    <article className="course-card" key={course.id}>
-                      <div className="course-card-heading">
-                        <h3>{course.name}</h3>
-                        {course.currentAveragePercentage === null ? (
-                          <span className="grade-badge empty">No grade yet</span>
-                        ) : (
-                          <span className="grade-badge">
-                            {formatPercentage(course.currentAveragePercentage)} · {course.letterGrade}
-                          </span>
+          {loading ? (
+            <p className="muted">Loading courses...</p>
+          ) : (
+            <div className="dashboard-grid">
+              <section className="dashboard-panel">
+                <h2>Your courses</h2>
+                {courses.length === 0 ? (
+                  <p className="muted">You have not added any courses yet.</p>
+                ) : (
+                  <div className="course-list">
+                    {courses.map((course) => (
+                      <article className="course-card" key={course.id}>
+                        <div className="course-card-heading">
+                          <h3>{course.name}</h3>
+                          {course.currentAveragePercentage === null ? (
+                            <span className="grade-badge empty">No grade yet</span>
+                          ) : (
+                            <span className="grade-badge">
+                              {formatPercentage(course.currentAveragePercentage)} · {course.letterGrade}
+                            </span>
+                          )}
+                        </div>
+                        <p>{course.term} · {course.creditHours} credit hours</p>
+                        <p>{course.totalWeight}% configured</p>
+                        {course.currentAveragePercentage !== null && (
+                          <p className="field-help">
+                            Based on categories representing{" "}
+                            {formatPercentage(course.gradedWeightPercentage)} of course weight.
+                          </p>
                         )}
-                      </div>
-                      <p>{course.term} · {course.creditHours} credit hours</p>
-                      <p>{course.totalWeight}% configured</p>
-                      {course.currentAveragePercentage !== null && (
-                        <p className="field-help">
-                          Based on categories representing {formatPercentage(course.gradedWeightPercentage)}
-                          of course weight.
-                        </p>
-                      )}
-                      <div className="row-actions">
-                        <button type="button" onClick={() => openCourse(course.id)}>Manage</button>
-                        <button type="button" className="danger-button" onClick={() => deleteCourse(course)}>Delete</button>
-                      </div>
-                    </article>
-                  ))}
-                </div>
-              )}
-            </section>
+                        <div className="row-actions">
+                          <button type="button" onClick={() => openCourse(course.id)}>Manage</button>
+                          <button type="button" className="danger-button" onClick={() => deleteCourse(course)}>Delete</button>
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+                )}
+              </section>
 
-            <section className="dashboard-panel">
-              <h2>Add course</h2>
-              <form className="form-grid" onSubmit={addCourse}>
-                <label>
-                  Course name
-                  <input name="courseName" maxLength={150} required />
-                </label>
-                <label>
-                  Term
-                  <input name="term" maxLength={100} placeholder="Fall 2026" required />
-                </label>
-                <label>
-                  Credit hours
-                  <input name="creditHours" type="number" min="0.5" max="30" step="0.5" required />
-                </label>
-                <button type="submit">Add course</button>
-              </form>
-            </section>
-          </div>
+              <section className="dashboard-panel">
+                <h2>Add course</h2>
+                <form className="form-grid" onSubmit={addCourse}>
+                  <label>
+                    Course name
+                    <input name="courseName" maxLength={150} required />
+                  </label>
+                  <label>
+                    Term
+                    <input name="term" maxLength={100} placeholder="Fall 2026" required />
+                  </label>
+                  <label>
+                    Credit hours
+                    <input name="creditHours" type="number" min="0.5" max="30" step="0.5" required />
+                  </label>
+                  <button type="submit">Add course</button>
+                </form>
+              </section>
+            </div>
+          )}
         </>
       )}
 
