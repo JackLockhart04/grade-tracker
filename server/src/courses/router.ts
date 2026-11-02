@@ -4,11 +4,13 @@ import {
   calculateCategoryGrade,
   calculateCourseGrade,
   calculateCumulativeGpa,
+  calculateWhatIfProjection,
 } from "../grades/calculations.js";
 
 const maximumCourseNameLength = 150;
 const maximumTermLength = 100;
 const maximumCategoryNameLength = 100;
+const maximumPoints = 99_999_999.99;
 
 class ApiError extends Error {
   constructor(
@@ -239,6 +241,59 @@ export function createCourseRouter() {
       }
 
       response.json({ course: serializeCourse(course) });
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  router.post("/courses/:courseId/what-if", async (request, response, next) => {
+    try {
+      const categoryId = request.body?.categoryId;
+      if (
+        !isUuid(request.params.courseId) ||
+        typeof categoryId !== "string" ||
+        !isUuid(categoryId)
+      ) {
+        response.status(404).json({ error: "Course or category not found." });
+        return;
+      }
+
+      const earnedPoints = cleanNumber(request.body?.earnedPoints, 0, maximumPoints, 2);
+      const possiblePoints = cleanNumber(
+        request.body?.possiblePoints,
+        0.01,
+        maximumPoints,
+        2,
+      );
+      if (earnedPoints === undefined || possiblePoints === undefined) {
+        response.status(400).json({
+          error: "Non-negative earned points and positive possible points are required. Points may have up to two decimal places.",
+        });
+        return;
+      }
+
+      const courses = await prisma.course.findMany({
+        where: { userId: response.locals.userId as string },
+        select: courseSelection,
+        orderBy: { createdAt: "asc" },
+      });
+      const serializedCourses = courses.map(serializeCourse);
+      const selectedCourse = serializedCourses.find(
+        (course) => course.id === request.params.courseId,
+      );
+      if (!selectedCourse?.categories.some((category) => category.id === categoryId)) {
+        response.status(404).json({ error: "Course or category not found." });
+        return;
+      }
+
+      const projection = calculateWhatIfProjection(
+        serializedCourses,
+        selectedCourse.id,
+        categoryId,
+        { earnedPoints, possiblePoints },
+      );
+
+      response.json({ projection });
     } catch (error) {
       next(error);
     }

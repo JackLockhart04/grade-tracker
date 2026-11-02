@@ -1,4 +1,4 @@
-# Milestone 1 Design Patterns
+# Grade Tracker Design Patterns
 
 ## Pattern 1: Layered architecture with a domain service
 
@@ -27,7 +27,7 @@ PostgreSQL
 
 ### Why it fits
 
-Grade calculations are the highest-risk domain rule. Keeping them in one pure service prevents the UI and persistence code from implementing slightly different formulas. Derived values can be recalculated after every assignment change without storing redundant summary columns. The boundary also supports future unit tests and the non-persisted what-if feature without changing database records.
+Grade calculations are the highest-risk domain rule. Keeping them in one pure service prevents the UI and persistence code from implementing slightly different formulas. Derived values can be recalculated after every assignment change without storing redundant summary columns. The boundary supports deterministic unit tests and the non-persisted What-If feature without changing database records.
 
 ### Tradeoffs
 

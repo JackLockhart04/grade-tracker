@@ -1,6 +1,6 @@
-# Milestone 1 Use Cases
+# Grade Tracker Use Cases
 
-These use cases cover the working MVP stories US-01 through US-04. The primary actor is a student. What-if simulation and guest access are reserved for Milestone 2.
+These use cases cover the working stories US-01 through US-05. The primary actor is a student. Guest access remains reserved for Milestone 2.
 
 ## UC-01: Register, sign in, and sign out
 
@@ -127,3 +127,34 @@ These use cases cover the working MVP stories US-01 through US-04. The primary a
 
 - Calculated values are returned without creating additional stored grade records.
 - The contribution rows sum to the displayed current course average, subject to two-decimal rounding.
+
+## UC-05: Project a hypothetical assignment
+
+**Related story:** US-05
+
+**Goal:** Preview how one future assignment could affect the selected course and cumulative GPA without changing saved grades.
+
+**Preconditions:** The student is authenticated and owns a course containing at least one category.
+
+### Main flow
+
+1. The student opens a course and selects a category in the What-If calculator.
+2. The student enters hypothetical earned and possible points.
+3. The client sends `POST /api/courses/:courseId/what-if`.
+4. The server verifies course and category ownership and loads the student's real courses and assignments.
+5. The calculation service adds the hypothetical score to an in-memory copy of the selected category.
+6. The server returns the projected course percentage, letter grade, grade points, cumulative GPA, and graded credit hours.
+7. The client clearly labels and displays the projected course grade and cumulative GPA.
+
+### Rules and alternatives
+
+- Exactly one hypothetical assignment is supported at a time.
+- Earned points are non-negative, possible points are positive, and both accept at most two decimal places within the saved-assignment limits.
+- Extra credit is allowed.
+- Invalid input returns `400`; an invalid, missing, or unowned course/category returns the same generic `404` response.
+- The projection is cleared when the student clears the calculator, leaves or changes the course, changes its input, or changes real course data. Any superseded request is ignored so an obsolete result or error cannot reappear.
+
+### Postconditions
+
+- No hypothetical assignment is created, updated, or otherwise persisted.
+- Refreshing or revisiting the course shows only saved grades.

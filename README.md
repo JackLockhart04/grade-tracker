@@ -2,13 +2,13 @@
 
 CS 415-001 Software Design & Development, Fall 2026, University of Alabama.
 
-A web app for students to enter their assignment grades, set category weights for each class, and see their class averages and GPA update automatically. Also planned: a "what-if" calculator for hypothetical grades and read-only access for a parent or advisor.
+A web app for students to enter their assignment grades, set category weights for each class, see their class averages and GPA update automatically, and preview the effect of one hypothetical assignment. Read-only access for a parent or advisor remains planned.
 
 **Team:** Jack Lockhart (jrlockhart2@crimson.ua.edu), Emanuel Melvin (emmelvin1@crimson.ua.edu)
 
 ## Status
 
-Milestone 2 in progress. The current application retains the Milestone 1 working MVP: authentication, course/category setup, assignment grade management, weighted course averages, and cumulative GPA. The submitted Milestone 1 version is tagged `milestone-1`; planned Milestone 2 features are not yet complete.
+Milestone 2 in progress. The application includes the Milestone 1 working MVP plus the non-persistent What-If calculator (US-05). The submitted Milestone 1 version is tagged `milestone-1`; guest sharing remains planned for Milestone 2.
 
 ## Technology stack
 
@@ -23,13 +23,13 @@ Milestone 2 in progress. The current application retains the Milestone 1 working
 - `docs/milestone-1-overview.md` - updated product brief, MVP scope, process, and Definition of Done
 - `docs/BACKLOG.md` - prioritized user stories
 - `docs/architecture-diagram.md` - architecture diagram (Mermaid)
-- `docs/use-cases.md` - Milestone 1 use cases and acceptance outcomes
+- `docs/use-cases.md` - implemented use cases and acceptance outcomes
 - `docs/analysis-model.md` - domain entities, rules, states, and data flow
 - `docs/api-design.md` - HTTP interface contract and examples
-- `docs/component-designs.md` - detailed authentication and grade-entry designs
+- `docs/component-designs.md` - detailed authentication, grade-entry, and What-If designs
 - `docs/wireframes.md` - responsive, multi-screen UX wireframes
 - `docs/design-patterns.md` - implemented design patterns and rationale
-- `docs/verification-guide.md` - fresh-clone setup and Milestone 1 acceptance checks
+- `docs/verification-guide.md` - fresh-clone setup and current acceptance checks
 - `docs/quality-checks.md` - Lighthouse, accessibility, responsive, and performance check procedure
 - `docs/contributions.md` - team contribution statements for review before submission
 - `docs/adr/` - accepted architecture decision records
@@ -163,6 +163,7 @@ All course and category routes require an authenticated session.
 | `GET` | `/api/courses` | List the signed-in student's courses |
 | `POST` | `/api/courses` | Create a course |
 | `GET` | `/api/courses/:courseId` | Read a course, its categories, and their assignments |
+| `POST` | `/api/courses/:courseId/what-if` | Project one hypothetical assignment without saving it |
 | `PATCH` | `/api/courses/:courseId` | Update a course |
 | `DELETE` | `/api/courses/:courseId` | Delete a course and its categories |
 | `POST` | `/api/courses/:courseId/categories` | Add a weighted category |
@@ -170,6 +171,8 @@ All course and category routes require an authenticated session.
 | `DELETE` | `/api/categories/:categoryId` | Delete a category |
 
 A course can be saved while its category weights total less than 100%. The API rejects any category change that would make the total exceed 100%.
+
+The What-If request accepts `categoryId`, `earnedPoints`, and `possiblePoints`. It returns projected course percentage, letter grade, grade points, cumulative GPA, and graded credit hours. The projection exists only in the response and React state; it never creates or updates an assignment.
 
 ## Assignment API
 

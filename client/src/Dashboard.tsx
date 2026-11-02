@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 
 type User = {
   email: string;
@@ -38,6 +38,14 @@ type Course = {
   updatedAt: string;
 };
 
+type WhatIfProjection = {
+  courseAveragePercentage: number;
+  letterGrade: "A" | "B" | "C" | "D" | "F";
+  gradePoints: number;
+  cumulativeGpa: number;
+  gradedCreditHours: number;
+};
+
 type ApiResponse = {
   course?: Course;
   courses?: Course[];
@@ -45,6 +53,7 @@ type ApiResponse = {
   assignment?: Assignment;
   cumulativeGpa?: number | null;
   gradedCreditHours?: number;
+  projection?: WhatIfProjection;
   error?: string;
 };
 
@@ -373,6 +382,85 @@ function CourseDetail({
   const [term, setTerm] = useState(course.term);
   const [creditHours, setCreditHours] = useState(String(course.creditHours));
   const [error, setError] = useState("");
+  const [whatIfCategoryId, setWhatIfCategoryId] = useState(course.categories[0]?.id ?? "");
+  const [whatIfEarnedPoints, setWhatIfEarnedPoints] = useState("");
+  const [whatIfPossiblePoints, setWhatIfPossiblePoints] = useState("");
+  const [whatIfProjection, setWhatIfProjection] = useState<WhatIfProjection>();
+  const [whatIfError, setWhatIfError] = useState("");
+  const [projecting, setProjecting] = useState(false);
+  const whatIfRequestId = useRef(0);
+
+  useEffect(() => {
+    if (!course.categories.some((category) => category.id === whatIfCategoryId)) {
+      invalidateWhatIfRequest();
+      setWhatIfCategoryId(course.categories[0]?.id ?? "");
+    }
+  }, [course.categories, whatIfCategoryId]);
+
+  useEffect(
+    () => () => {
+      whatIfRequestId.current += 1;
+    },
+    [],
+  );
+
+  function invalidateWhatIfRequest() {
+    whatIfRequestId.current += 1;
+    setWhatIfProjection(undefined);
+    setWhatIfError("");
+    setProjecting(false);
+  }
+
+  function clearWhatIf() {
+    invalidateWhatIfRequest();
+    setWhatIfCategoryId(course.categories[0]?.id ?? "");
+    setWhatIfEarnedPoints("");
+    setWhatIfPossiblePoints("");
+  }
+
+  async function handleRealDataChanged() {
+    clearWhatIf();
+    await onChanged();
+  }
+
+  async function projectGrade(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const requestId = whatIfRequestId.current + 1;
+    whatIfRequestId.current = requestId;
+    try {
+      setWhatIfError("");
+      setWhatIfProjection(undefined);
+      setProjecting(true);
+      const body = await apiRequest(`/api/courses/${course.id}/what-if`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          categoryId: whatIfCategoryId,
+          earnedPoints: Number(whatIfEarnedPoints),
+          possiblePoints: Number(whatIfPossiblePoints),
+        }),
+      });
+      if (!body.projection) {
+        throw new Error("The server did not return a projection.");
+      }
+      if (requestId !== whatIfRequestId.current) {
+        return;
+      }
+      setWhatIfProjection(body.projection);
+    } catch (requestError) {
+      if (requestId !== whatIfRequestId.current) {
+        return;
+      }
+      setWhatIfProjection(undefined);
+      setWhatIfError(
+        requestError instanceof Error ? requestError.message : "Unable to calculate projection.",
+      );
+    } finally {
+      if (requestId === whatIfRequestId.current) {
+        setProjecting(false);
+      }
+    }
+  }
 
   async function updateCourse(event: FormEvent) {
     event.preventDefault();
@@ -383,7 +471,7 @@ function CourseDetail({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, term, creditHours: Number(creditHours) }),
       });
-      await onChanged();
+      await handleRealDataChanged();
     } catch (requestError) {
       setError(requestError instanceof Error ? requestError.message : "Unable to update course.");
     }
@@ -404,7 +492,7 @@ function CourseDetail({
         }),
       });
       form.reset();
-      await onChanged();
+      await handleRealDataChanged();
     } catch (requestError) {
       setError(requestError instanceof Error ? requestError.message : "Unable to add category.");
     }
@@ -464,6 +552,84 @@ function CourseDetail({
           </>
         )}
       </div>
+
+      <section className="what-if-calculator" aria-labelledby="what-if-heading">
+        <h3 id="what-if-heading">What-If calculator</h3>
+        <p className="muted">
+          Preview one hypothetical assignment. This projection is temporary and nothing will be
+          saved.
+        </p>
+        {course.categories.length === 0 ? (
+          <p className="field-help">Add a category before calculating a projection.</p>
+        ) : (
+          <form className="what-if-form" onSubmit={projectGrade}>
+            <label>
+              Category
+              <select
+                value={whatIfCategoryId}
+                onChange={(event) => {
+                  invalidateWhatIfRequest();
+                  setWhatIfCategoryId(event.target.value);
+                }}
+                required
+              >
+                {course.categories.map((category) => (
+                  <option key={category.id} value={category.id}>{category.name}</option>
+                ))}
+              </select>
+            </label>
+            <label>
+              Hypothetical points earned
+              <input
+                type="number"
+                min="0"
+                max="99999999.99"
+                step="0.01"
+                value={whatIfEarnedPoints}
+                onChange={(event) => {
+                  invalidateWhatIfRequest();
+                  setWhatIfEarnedPoints(event.target.value);
+                }}
+                required
+              />
+            </label>
+            <label>
+              Hypothetical points possible
+              <input
+                type="number"
+                min="0.01"
+                max="99999999.99"
+                step="0.01"
+                value={whatIfPossiblePoints}
+                onChange={(event) => {
+                  invalidateWhatIfRequest();
+                  setWhatIfPossiblePoints(event.target.value);
+                }}
+                required
+              />
+            </label>
+            <div className="row-actions">
+              <button type="submit" disabled={projecting}>
+                {projecting ? "Calculating..." : "Calculate projection"}
+              </button>
+              <button type="button" className="secondary-button" onClick={clearWhatIf}>
+                Clear
+              </button>
+            </div>
+          </form>
+        )}
+        <p className="field-help">
+          Use up to two decimal places. Earned points may exceed possible points for extra credit.
+        </p>
+        {whatIfProjection && (
+          <div className="what-if-results" aria-live="polite">
+            <p><span>Projected course grade</span><strong>{formatPercentage(whatIfProjection.courseAveragePercentage)}</strong></p>
+            <p><span>Projected letter grade</span><strong>{whatIfProjection.letterGrade}</strong></p>
+            <p><span>Projected cumulative GPA</span><strong>{whatIfProjection.cumulativeGpa.toFixed(2)}</strong></p>
+          </div>
+        )}
+        {whatIfError && <p className="error" role="alert">{whatIfError}</p>}
+      </section>
 
       {course.categories.length > 0 && (
         <section className="grade-breakdown" aria-labelledby="grade-breakdown-heading">
@@ -531,7 +697,7 @@ function CourseDetail({
       ) : (
         <div className="category-list">
           {course.categories.map((category) => (
-            <CategoryRow key={category.id} category={category} onChanged={onChanged} />
+            <CategoryRow key={category.id} category={category} onChanged={handleRealDataChanged} />
           ))}
         </div>
       )}

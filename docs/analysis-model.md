@@ -1,4 +1,4 @@
-# Milestone 1 Analysis Model
+# Grade Tracker Analysis Model
 
 ## Domain model
 
@@ -68,8 +68,11 @@ The following values are computed on reads and are not stored:
 - normalized category share and percentage-point contribution;
 - current course average, letter grade, and grade points;
 - cumulative GPA and graded credit hours.
+- What-If course and GPA projections, which temporarily add one hypothetical assignment in memory.
 
 This prevents stored summary values from becoming stale after an assignment change.
+
+The What-If scenario is not an entity and has no database table. It exists only in a request, the calculation service's in-memory inputs, the response, and transient React state.
 
 ## Main behavior and data flow
 
