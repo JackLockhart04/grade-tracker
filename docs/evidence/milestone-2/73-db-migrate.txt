@@ -1,0 +1,33 @@
+
+> grade-tracker@0.1.0 db:migrate
+> npm run db:migrate --workspace server
+
+
+> @grade-tracker/server@0.1.0 db:migrate
+> prisma migrate dev --config prisma7.config.ts
+
+◇ injected env (6) from ../.env
+Loaded Prisma config from prisma7.config.ts.
+
+Prisma schema loaded from prisma/schema.prisma.
+Datasource "db": PostgreSQL database "grade_tracker_ta_check", schema "public" at "localhost:5432"
+
+Applying migration `20260929031519_init_user`
+Applying migration `20260929053016_add_sessions`
+Applying migration `20260929054517_add_courses_categories`
+Applying migration `20260929144655_add_assignments`
+
+The following migration(s) have been applied:
+
+migrations/
+  └─ 20260929031519_init_user/
+    └─ migration.sql
+  └─ 20260929053016_add_sessions/
+    └─ migration.sql
+  └─ 20260929054517_add_courses_categories/
+    └─ migration.sql
+  └─ 20260929144655_add_assignments/
+    └─ migration.sql
+
+Your database is now in sync with your schema.
+

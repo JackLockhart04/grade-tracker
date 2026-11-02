@@ -1,0 +1,3 @@
+# Fresh-clone check of the Section 9 instructions, 2026-11-02 11:15-11:22 EST
+# git clone of the security branch at commit 9d1ab5b into a new folder (clone of the local worktree, same tree as origin), Node v24.19.0, npm 11.17.0, local Homebrew PostgreSQL 17.11 (no Docker)
+# Steps: npm ci -> cp .env.example .env (new SESSION_SECRET, DATABASE_URL pointed at new empty database grade_tracker_ta_check) -> npm run db:generate -> npm test -> npm run build -> npm run db:migrate -> npm run db:seed -> npm start + npm run preview -> curl /api/health /api/ready -> node scripts/security-evidence.mjs http://localhost:3000 12 -> curl -i /api/health -> headless Chrome login with the correct password (demo/09-login-blocked-desktop.png)

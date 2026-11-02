@@ -1,0 +1,10 @@
+
+> grade-tracker@0.1.0 db:seed
+> npm run db:seed --workspace server
+
+
+> @grade-tracker/server@0.1.0 db:seed
+> tsx prisma/seed.ts
+
+◇ injected env (6) from ../.env
+Seeded demo@example.com (password: DemoAccount2026!) with 3 courses.
