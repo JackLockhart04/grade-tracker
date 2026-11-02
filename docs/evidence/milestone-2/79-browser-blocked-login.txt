@@ -1,0 +1,6 @@
+# headless Chrome 156 (puppeteer-core 25.16.0), 1280x900, http://localhost:4173 (vite preview proxying /api to :3000)
+# after the 12 attempts in 76-security-script.txt, typed demo@example.com / DemoAccount2026! and pressed Log in
+login response statuses: 429
+alert text: Too many attempts. Try again later.
+signed in? false
+screenshot: demo/09-login-blocked-desktop.png

@@ -1,0 +1,20 @@
+# LIVE: 12 failed logins against the real stack (npm start, server/dist on commit 9d1ab5b, local Homebrew PostgreSQL 17 database grade_tracker_m2, seeded demo@example.com)
+# Produced 2026-11-02 11:10:04 EST
+# Command: node scripts/security-evidence.mjs http://localhost:3000 12
+
+Target: http://localhost:3000/api/auth/login
+Sending 12 login attempts with a wrong password.
+
+attempt status  RateLimit-Remaining  body
+1       401     9                    {"error":"Invalid email or password."}
+2       401     8                    {"error":"Invalid email or password."}
+3       401     7                    {"error":"Invalid email or password."}
+4       401     6                    {"error":"Invalid email or password."}
+5       401     5                    {"error":"Invalid email or password."}
+6       401     4                    {"error":"Invalid email or password."}
+7       401     3                    {"error":"Invalid email or password."}
+8       401     2                    {"error":"Invalid email or password."}
+9       401     1                    {"error":"Invalid email or password."}
+10      401     0                    {"error":"Invalid email or password."}
+11      429     0                    {"error":"Too many attempts. Try again later."}
+12      429     0                    {"error":"Too many attempts. Try again later."}

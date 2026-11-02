@@ -1,20 +1,19 @@
-# Milestone 1 Team Contributions
+# Milestone 2 Team Contributions
 
-This file records each team member's contributions to the Milestone 1 submission.
+This file records each team member's contributions to the Milestone 2 submission. The Milestone 1 statements are in the Milestone 1 report.
 
 ## Jack Lockhart
 
-- Set up the React, Express, TypeScript, npm-workspace, Docker PostgreSQL, and Prisma foundation.
-- Implemented the Milestone 1 authentication, course/category management, assignment management, grade calculations, and GPA interface increments recorded in Git.
-- Added the architecture decisions, design artifacts, setup documentation, and verification workflow currently committed to the repository.
-- Prepared the application for repeatable local development and Milestone 1 review.
+- Set up the Milestone 2 baseline: the milestone overview, changelog, backlog acceptance criteria, and the coverage tooling for both workspaces (PR #5).
+- Built the US-05 What-If calculator end to end: the calculation function, the route, the React section, and the styles, with its client and server tests (PR #6).
+- Updated the use-case, API, component-design, analysis-model, and verification documents for the What-If feature.
 
 ## Emanuel Melvin
 
-- Contributed to early project planning and Milestone 0 documentation, and expanded the repository README during Milestone 0.
-- Ran the Milestone 1 verification guide and the Lighthouse, keyboard, zoom, and phone-width checks on a fresh clone, then fixed the four issues they found (dashboard layout shift, heading order, missing `robots.txt`, missing favicon) and recorded the results in [quality-checks.md](quality-checks.md).
-- Added the `npm run db:seed` demonstration data and the `npm run preview` command.
-- Wrote the Milestone 1 report.
+- Added the login and registration rate limiting and the HTTP security headers with their tests (PR #7).
+- Wrote the threat model and OWASP Top 10 review in [security.md](security.md) and produced the before-and-after security evidence in `docs/evidence/milestone-2/`.
+- Ran the QA checklist, coverage, Lighthouse, and cross-viewport checks in fresh worktrees of the Milestone 2 branches, and reviewed and approved the What-If pull request.
+- Wrote the Milestone 2 report.
 
 ## Shared responsibility
 

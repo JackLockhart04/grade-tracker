@@ -1,0 +1,30 @@
+
+> grade-tracker@0.1.0 test
+> npm run test --workspaces --if-present
+
+
+> @grade-tracker/client@0.1.0 test
+> vitest run --passWithNoTests
+
+
+ RUN  v5.0.2 <fresh-clone>/client
+
+
+ Test Files  1 passed (1)
+      Tests  17 passed (17)
+   Start at  11:20:43
+   Duration  1.28s (tests 54%, environment 33%, import 8%, transform 4%)
+
+
+> @grade-tracker/server@0.1.0 test
+> vitest run --passWithNoTests
+
+
+ RUN  v5.0.2 <fresh-clone>/server
+
+
+ Test Files  4 passed (4)
+      Tests  48 passed (48)
+   Start at  11:20:45
+   Duration  406ms (import 42%, transform 29%, tests 28%, worker 1%)
+
