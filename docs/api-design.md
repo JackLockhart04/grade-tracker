@@ -25,6 +25,7 @@
 | `401` | Authentication is required or credentials are invalid |
 | `404` | Resource does not exist for the signed-in user |
 | `409` | Unique value conflicts with existing data |
+| `429` | Too many login or registration attempts from one client in the current window |
 | `500` | Unexpected server failure |
 
 ## Service and readiness routes
@@ -65,6 +66,8 @@ The email is trimmed and lowercased. Passwords must contain 12-128 characters. D
 ### Login
 
 `POST /api/auth/login` uses the same request fields and returns `200` with the user object. Any incorrect credential combination returns `401 { "error": "Invalid email or password." }`.
+
+Login and registration are rate limited per client IP (10 requests per 15 minutes by default). Responses carry `RateLimit-Limit`, `RateLimit-Remaining`, and `RateLimit-Reset` headers, and a request over the limit returns `429 { "error": "Too many attempts. Try again later." }` with a `Retry-After` header. See [security.md](security.md).
 
 ### Current user
 

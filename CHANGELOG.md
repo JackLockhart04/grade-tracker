@@ -11,6 +11,10 @@ All notable changes to Grade Tracker are documented here. This project follows a
 - V8 coverage commands for the client and server workspaces.
 - An authenticated, non-persistent What-If calculator for projecting one assignment's effect on a course grade and cumulative GPA.
 - Calculation and What-If route tests covering grade boundaries, weighting, rounding, validation, authorization, and non-persistence.
+- Per-IP rate limiting on login and registration (10 attempts per 15 minutes by default, configurable with `AUTH_RATE_LIMIT_MAX` and `AUTH_RATE_LIMIT_WINDOW_MS`) returning `429` with standard `RateLimit-*` headers.
+- Helmet security headers on every API response.
+- Auth rate-limit and security-header tests, a `scripts/security-evidence.mjs` check script, and recorded before-and-after evidence under `docs/evidence/milestone-2/`.
+- A threat model, OWASP Top 10 review, and verification steps in `docs/security.md`.
 
 Read-only guest sharing remains planned Milestone 2 work.
 
