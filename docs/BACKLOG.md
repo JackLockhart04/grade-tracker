@@ -8,7 +8,7 @@
 | US-02 | As a student, I want to create courses and assign category weights... | High | 5 | Done | Allows incomplete totals; rejects totals over 100% |
 | US-03 | As a student, I want to enter assignment grades with earned and total points... | High | 5 | Done | Assignment CRUD by weighted category; extra credit supported |
 | US-04 | As a student, I want automated calculation of class averages and cumulative GPA... | High | 5 | Done | Weighted current averages; credit-hour GPA on standard 4.0 scale |
-| US-05 | As a student, I want to use a "what-if" calculator for hypothetical grades... | High | 5 | Backlog | In-memory calculation, non-persisted |
+| US-05 | As a student, I want to use a "what-if" calculator for hypothetical grades... | High | 5 | Done | One in-memory hypothetical assignment; projected course grade and GPA |
 | US-06 | As a student, I want to share read-only access with an advisor/parent... | Medium | 3 | Backlog | Revocable secret link with a hashed random token |
 | US-07 | As a guest viewer, I want to view a student's GPA and course averages... | Medium | 3 | Backlog | Read-only enforcement |
 | US-08 | As a student, I want custom grade point scales per course (capped at 4.0)... | Low | 3 | Backlog | Candidate for Milestone 2 |

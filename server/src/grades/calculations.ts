@@ -15,6 +15,16 @@ type CourseGpaInput = {
   gradePoints: number | null;
 };
 
+type WhatIfCourseInput = {
+  id: string;
+  creditHours: number;
+  categories: Array<{
+    id: string;
+    weightPercentage: number;
+    assignments: AssignmentPoints[];
+  }>;
+};
+
 function roundToHundredths(value: number): number {
   return Math.round((value + Number.EPSILON) * 100) / 100;
 }
@@ -134,5 +144,54 @@ export function calculateCumulativeGpa(courses: CourseGpaInput[]) {
   return {
     cumulativeGpa: roundToHundredths(qualityPoints / gradedCreditHours),
     gradedCreditHours: roundToHundredths(gradedCreditHours),
+  };
+}
+
+export function calculateWhatIfProjection(
+  courses: WhatIfCourseInput[],
+  courseId: string,
+  categoryId: string,
+  hypotheticalAssignment: AssignmentPoints,
+) {
+  const selectedCourse = courses.find((course) => course.id === courseId);
+  if (!selectedCourse?.categories.some((category) => category.id === categoryId)) {
+    return null;
+  }
+
+  let projectedCourseGrade: ReturnType<typeof calculateCourseGrade> | undefined;
+
+  const projectedCourses = courses.map((course) => {
+    const categoryGrades = course.categories.map((category) =>
+      calculateCategoryGrade(
+        course.id === courseId && category.id === categoryId
+          ? [...category.assignments, hypotheticalAssignment]
+          : category.assignments,
+      ),
+    );
+    const courseGrade = calculateCourseGrade(
+      course.categories.map((category, index) => ({
+        weightPercentage: category.weightPercentage,
+        averagePercentage: categoryGrades[index].averagePercentage,
+      })),
+    );
+
+    if (course.id === courseId) {
+      projectedCourseGrade = courseGrade;
+    }
+
+    return { creditHours: course.creditHours, gradePoints: courseGrade.gradePoints };
+  });
+
+  if (!projectedCourseGrade || projectedCourseGrade.currentAveragePercentage === null) {
+    return null;
+  }
+
+  const gpa = calculateCumulativeGpa(projectedCourses);
+
+  return {
+    courseAveragePercentage: projectedCourseGrade.currentAveragePercentage,
+    letterGrade: projectedCourseGrade.letterGrade,
+    gradePoints: projectedCourseGrade.gradePoints,
+    ...gpa,
   };
 }

@@ -12,16 +12,16 @@ Milestone 2 builds on the working Milestone 1 application by completing addition
 - updated setup, environment, migration, seed, test-account, verification, and contribution documentation;
 - documented branching and commit conventions, this changelog, and the required final `milestone-2` tag.
 
-## Planned scope
+## Scope
 
-- US-05: non-persisted What-If course-grade and GPA projections.
+- US-05: non-persisted What-If course-grade and GPA projections. **Completed.**
 - US-06: student-controlled creation, copying, and revocation of read-only secret links using cryptographically random tokens stored only as hashes; guests do not need accounts.
 - US-07: an authorized, read-only guest academic summary.
 - Automated unit and integration testing, coverage measurement, and QA evidence.
 - Security analysis, an implemented and testable control, and before-and-after evidence.
 - Updated reproducibility and verification instructions for a fresh clone.
 
-These items are planned work, not claims about the current baseline.
+US-05 is completed in the current application. The remaining scope items are planned work, not claims about completed behavior.
 
 ## Definition of Done
 
@@ -54,6 +54,6 @@ By the final Milestone 2 release, automated tests should reach:
 - at least 70% line coverage in both the client and server application code; and
 - at least 90% line coverage for `server/src/grades/calculations.ts`.
 
-The higher calculation-module target is justified because incorrect weighted grades or GPA results are a high-impact project risk, and the pure calculation service can be tested deterministically. These are final Milestone 2 targets, not claims about the current baseline, and they are not enforced yet while the planned tests are still being added.
+The higher calculation-module target is justified because incorrect weighted grades or GPA results are a high-impact project risk, and the pure calculation service can be tested deterministically. The calculation module currently meets its target; the client and overall server targets remain final Milestone 2 goals while broader tests are added.
 
 Coverage evaluation includes all client and server source files, including files not yet exercised by a test, so untested code remains visible in the baseline. Generated Prisma code, build output, test files, configuration-only files, and TypeScript declaration files are excluded so they do not distort the application-code target.

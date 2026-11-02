@@ -1,9 +1,9 @@
-# Milestone 1 API Design
+# Grade Tracker API Design
 
 ## Contract conventions
 
 - Base path: `/api`
-- Data format: JSON, except successful delete and logout responses contain no body.
+- Data format: JSON, except successful delete and logout responses contain no body. Syntactically malformed JSON returns `400 { "error": "Invalid JSON body." }` without parser details.
 - Authentication: HTTP-only session cookie named `grade_tracker.sid`.
 - Authorization: protected routes derive the user from the session and never accept a user ID from the client.
 - IDs: UUID strings.
@@ -131,6 +131,36 @@ Success: `201 { "course": Course }`.
 | `DELETE` | `/api/courses/:courseId` | None | `204` |
 
 Despite the `PATCH` method, the current update contract requires all three editable course fields. Deleting a course cascades to its categories and assignments.
+
+### Project one hypothetical assignment
+
+`POST /api/courses/:courseId/what-if`
+
+```json
+{
+  "categoryId": "935457a4-99ba-441c-b48f-d4d15159927e",
+  "earnedPoints": 92,
+  "possiblePoints": 100
+}
+```
+
+Success: `200`
+
+```json
+{
+  "projection": {
+    "courseAveragePercentage": 91.25,
+    "letterGrade": "A",
+    "gradePoints": 4,
+    "cumulativeGpa": 3.5,
+    "gradedCreditHours": 7
+  }
+}
+```
+
+The selected course and category must both belong to the authenticated student. Unknown, invalid, and unowned identifiers return the same `404 { "error": "Course or category not found." }` response. Point validation matches saved assignments: earned points are from 0 through 99,999,999.99, possible points are from 0.01 through 99,999,999.99, both allow at most two decimal places, and extra credit is allowed.
+
+The server reads the student's real course graph, adds the hypothetical assignment only to an in-memory representation, and reuses the normal course and GPA calculations. The route performs no create, update, upsert, or delete and returns only the projection.
 
 ## Categories
 

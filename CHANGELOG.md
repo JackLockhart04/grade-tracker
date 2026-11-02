@@ -7,10 +7,12 @@ All notable changes to Grade Tracker are documented here. This project follows a
 ### Added
 
 - Milestone 2 scope, Definition of Done, workflow conventions, and final coverage targets.
-- Testable acceptance criteria for the planned What-If and revocable secret-link sharing stories.
+- Testable acceptance criteria for What-If and the planned revocable secret-link sharing stories.
 - V8 coverage commands for the client and server workspaces.
+- An authenticated, non-persistent What-If calculator for projecting one assignment's effect on a course grade and cumulative GPA.
+- Calculation and What-If route tests covering grade boundaries, weighting, rounding, validation, authorization, and non-persistence.
 
-Milestone 2 features are planned work and are not yet included in this baseline.
+Read-only guest sharing remains planned Milestone 2 work.
 
 ## [milestone-1] - 2026-09-29
 

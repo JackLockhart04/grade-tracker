@@ -11,6 +11,31 @@ type AppDependencies = {
   checkDatabase?: () => Promise<void>;
 };
 
+export function isMalformedJsonError(error: unknown): boolean {
+  return Boolean(
+    error instanceof SyntaxError &&
+      "status" in error &&
+      error.status === 400 &&
+      "type" in error &&
+      error.type === "entity.parse.failed",
+  );
+}
+
+export function handleApplicationError(
+  error: unknown,
+  _request: Request,
+  response: Response,
+  _next: NextFunction,
+) {
+  if (isMalformedJsonError(error)) {
+    response.status(400).json({ error: "Invalid JSON body." });
+    return;
+  }
+
+  console.error(error);
+  response.status(500).json({ error: "An unexpected error occurred." });
+}
+
 export function createApp({
   checkDatabase = defaultCheckDatabase,
 }: AppDependencies = {}) {
@@ -44,12 +69,7 @@ export function createApp({
   app.use("/api", requireAuthentication, createCourseRouter());
   app.use("/api", requireAuthentication, createAssignmentRouter());
 
-  app.use(
-    (error: unknown, _request: Request, response: Response, _next: NextFunction) => {
-      console.error(error);
-      response.status(500).json({ error: "An unexpected error occurred." });
-    },
-  );
+  app.use(handleApplicationError);
 
   return app;
 }

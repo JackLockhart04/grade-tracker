@@ -1,6 +1,6 @@
-# Milestone 1 Setup and Verification Guide
+# Grade Tracker Setup and Verification Guide
 
-This guide gives a teaching assistant or teammate a repeatable way to run and verify the exact Milestone 1 application. The full check below creates its data through the interface. For a quick look, `npm run db:seed` loads `demo@example.com` (password `DemoAccount2026!`) with the same three courses already entered; that account should show Software Engineering at 86.25% (B), Databases at 110.00% (A), History with no grade, and a cumulative GPA of 3.25.
+This guide gives a teaching assistant or teammate a repeatable way to run and verify the current application, including the Milestone 1 workflow and the US-05 What-If calculator. The full check below creates its data through the interface. For a quick look, `npm run db:seed` loads `demo@example.com` (password `DemoAccount2026!`) with the same three courses already entered; that account should show Software Engineering at 86.25% (B), Databases at 110.00% (A), History with no grade, and a cumulative GPA of 3.25.
 
 ## 1. Required software
 
@@ -64,13 +64,15 @@ Expected results:
 ```bash
 npm run build
 npm test
+npm run test:coverage
 ```
 
 Expected results:
 
 - The React client and Express server compile successfully.
-- The server health/readiness test file passes all three tests.
-- The client test command exits successfully even though Milestone 1 has no client test files yet.
+- The server health/readiness, malformed-JSON, calculation, and What-If route suites pass all 44 tests.
+- The client What-If interface suite passes all 17 tests, including stale-response handling and non-persistence behavior.
+- Coverage reports are written to ignored `client/coverage` and `server/coverage` folders, and `server/src/grades/calculations.ts` reports at least 90% line coverage.
 
 ## 4. Start and verify the services
 
@@ -202,14 +204,26 @@ The updated Software Engineering calculation is:
 (100 x 30 + 90 x 50) / (30 + 50) = 93.75
 ```
 
-## 8. Verify privacy between users
+## 8. Verify the What-If calculator
+
+1. Open Software Engineering and find the What-If calculator.
+2. Select Homework and enter 92 earned points out of 100 possible points.
+3. Calculate the projection and confirm it shows a projected course grade of **91.02%**, letter **A**, and projected cumulative GPA **4.00** after the real Homework edit in Section 7.
+4. Confirm the result is labeled as a projection and states that nothing is saved.
+5. Select Clear and confirm the projected values disappear.
+6. Calculate the same projection again, return to the course list, and reopen the course.
+7. Confirm the projection is gone and no hypothetical assignment appears in Homework.
+8. Change a real assignment or category and confirm any displayed projection is cleared.
+9. Resize to a phone-width viewport and confirm the calculator fields and results stack without page-level horizontal scrolling.
+
+## 9. Verify privacy between users
 
 1. Log out of the demonstration account.
 2. Register `ta.second@example.com` with a different valid password.
 3. Confirm the new account has an empty dashboard and cannot see the first account's courses.
 4. Log out and return to the first account to confirm its data remains unchanged.
 
-## 9. Verify persistence and responsive behavior
+## 10. Verify persistence and responsive behavior
 
 1. Stop `npm run dev` with `Ctrl+C`.
 2. Start it again with `npm run dev`.
@@ -218,9 +232,9 @@ The updated Software Engineering calculation is:
 5. Confirm forms and cards stack vertically and the grade-breakdown table scrolls horizontally.
 6. Use the keyboard to tab through forms and buttons; focus should remain visible and every input should have a readable label.
 
-Run and record the more complete Lighthouse, accessibility, zoom, and performance procedure in [quality-checks.md](quality-checks.md) against the final Milestone 1 commit.
+Run and record the more complete Lighthouse, accessibility, zoom, and performance procedure in [quality-checks.md](quality-checks.md) against the final Milestone 2 commit.
 
-## 10. Stop the local environment
+## 11. Stop the local environment
 
 Stop the development servers with `Ctrl+C`, then stop PostgreSQL:
 
@@ -235,12 +249,14 @@ Normal shutdown preserves the local demonstration data. Database reset instructi
 - [ ] Fresh dependencies install successfully.
 - [ ] PostgreSQL becomes healthy and migrations apply.
 - [ ] Production build succeeds.
-- [ ] Existing automated smoke tests pass.
+- [ ] Automated health, calculation, and What-If route tests pass.
 - [ ] Registration, logout, failed login, and valid login work.
 - [ ] Course/category/assignment create, edit, and delete work.
 - [ ] Course averages and contribution breakdown match the expected values.
 - [ ] Extra credit is supported and grade points remain capped at 4.0.
 - [ ] Cumulative GPA is weighted by graded credit hours.
+- [ ] A What-If score updates projected course grade and GPA without saving an assignment.
+- [ ] Clearing, leaving, refreshing, or changing real course data discards the projection.
 - [ ] A second user cannot see the first user's data.
 - [ ] Data persists after restarting the application.
 - [ ] The interface remains usable at a phone-width viewport and by keyboard.

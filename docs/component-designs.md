@@ -1,6 +1,6 @@
-# Milestone 1 Component Designs
+# Grade Tracker Component Designs
 
-This document expands two important MVP use cases into component-level designs.
+This document expands important use cases into component-level designs.
 
 ## Design A: Secure authentication
 
@@ -141,3 +141,31 @@ sequenceDiagram
 - Unowned resources return `404` for reads and mutations.
 - If the refresh fails after a successful write, the saved database value remains correct and appears on the next reload.
 - Deleting a category or course relies on database cascades so orphaned assignments cannot remain.
+
+## Design C: Project one hypothetical assignment
+
+**Use case:** UC-05 / US-05
+
+**Components:** React `Dashboard`, authentication guard, course router, calculation service, Prisma/PostgreSQL read boundary.
+
+```mermaid
+sequenceDiagram
+    actor Student
+    participant UI as React Dashboard
+    participant Guard as Authentication guard
+    participant Courses as Course router
+    participant Prisma as Prisma
+    participant Calc as Calculation service
+
+    Student->>UI: Select category and enter hypothetical points
+    UI->>Guard: POST /api/courses/:courseId/what-if
+    Guard->>Courses: Authenticated user ID
+    Courses->>Prisma: Read the student's course graph
+    Prisma-->>Courses: Real courses, categories, assignments
+    Courses->>Calc: Add one score in memory and project grades
+    Calc-->>Courses: Projected course result and cumulative GPA
+    Courses-->>UI: Projection only
+    UI-->>Student: Clearly labeled projected values
+```
+
+The router validates assignment-equivalent point limits and verifies that both identifiers belong to the authenticated student. The calculation service reuses category, course, grade-scale, and GPA functions. Prisma is read only; the hypothetical assignment never enters a persistence model. React discards the scenario on clear, navigation, course change, or any real-data mutation.
