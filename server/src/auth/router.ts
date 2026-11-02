@@ -1,6 +1,7 @@
 import { argon2id, hash, verify } from "argon2";
 import { Router, type Request } from "express";
 import { prisma } from "../database/prisma.js";
+import { createAuthRateLimiter } from "./rate-limit.js";
 import { sessionCookieName } from "./session.js";
 
 const minimumPasswordLength = 12;
@@ -76,7 +77,7 @@ function saveSession(request: Request): Promise<void> {
 export function createAuthRouter() {
   const router = Router();
 
-  router.post("/register", async (request, response, next) => {
+  router.post("/register", createAuthRateLimiter(), async (request, response, next) => {
     try {
       const credentials = parseCredentials(request.body);
 
@@ -141,7 +142,7 @@ export function createAuthRouter() {
     }
   });
 
-  router.post("/login", async (request, response, next) => {
+  router.post("/login", createAuthRateLimiter(), async (request, response, next) => {
     try {
       const credentials = parseCredentials(request.body);
       const invalidCredentials = { error: "Invalid email or password." };
