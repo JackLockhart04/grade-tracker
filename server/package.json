@@ -8,6 +8,7 @@
     "dev": "tsx watch src/server.ts",
     "build": "npm run db:generate && tsc -p tsconfig.json",
     "test": "vitest run --passWithNoTests",
+    "test:coverage": "vitest run --coverage --coverage.include=\"src/**/*.ts\" --coverage.exclude=\"src/generated/**\" --coverage.exclude=\"src/**/*.d.ts\" --coverage.exclude=\"src/**/*.test.ts\" --passWithNoTests",
     "start": "node dist/server.js",
     "db:generate": "prisma generate --config prisma7.config.ts",
     "db:migrate": "prisma migrate dev --config prisma7.config.ts",
