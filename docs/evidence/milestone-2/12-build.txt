@@ -1,0 +1,43 @@
+
+> grade-tracker@0.1.0 build
+> npm run build --workspace client && npm run build --workspace server
+
+
+> @grade-tracker/client@0.1.0 build
+> tsc -b && vite build
+
+vite v8.3.1 building client environment for production...
+transforming...
+✓ 17 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.53 kB │ gzip:  0.32 kB
+dist/assets/index-CrBiP2x-.css    6.00 kB │ gzip:  1.75 kB
+dist/assets/index-CBf8qWhO.js   240.31 kB │ gzip: 73.04 kB
+
+✓ built in 263ms
+
+> @grade-tracker/server@0.1.0 build
+> npm run db:generate && tsc -p tsconfig.json
+
+
+> @grade-tracker/server@0.1.0 db:generate
+> prisma generate --config prisma7.config.ts
+
+◇ injected env (0) from ../.env
+Loaded Prisma config from prisma7.config.ts.
+
+Prisma schema loaded from prisma/schema.prisma.
+┌─────────────────────────────────────────────────────────┐
+│  Update available 7.10.0 -> 8.0.0-rc.29                 │
+│                                                         │
+│  This is a major update - please follow the guide at    │
+│  https://pris.ly/d/major-version-upgrade                │
+│                                                         │
+│  Run the following to update                            │
+│    npm i --save-dev prisma@latest                       │
+│    npm i @prisma/client@latest                          │
+└─────────────────────────────────────────────────────────┘
+
+✔ Generated Prisma Client (7.10.0) to ./src/generated/prisma in 21ms
+

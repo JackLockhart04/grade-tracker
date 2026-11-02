@@ -1,0 +1,26 @@
+# AFTER: GET /api/health response headers on feature/security-hardening (helmet enabled)
+# Produced 2026-11-02 10:59:12 EST
+# Command: curl -i http://127.0.0.1:3102/api/health
+# Note: no PostgreSQL/Docker on this machine, so the API was started in-process by scripts/security-evidence-server.mjs, which stubs the Prisma client (every user lookup returns no user, so each login fails with 401 like a wrong password). Session store = in-memory (NODE_ENV=test).
+
+HTTP/1.1 200 OK
+Content-Security-Policy: default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests
+Cross-Origin-Opener-Policy: same-origin
+Cross-Origin-Resource-Policy: same-origin
+Origin-Agent-Cluster: ?1
+Referrer-Policy: no-referrer
+Strict-Transport-Security: max-age=31536000; includeSubDomains
+X-Content-Type-Options: nosniff
+X-DNS-Prefetch-Control: off
+X-Download-Options: noopen
+X-Frame-Options: SAMEORIGIN
+X-Permitted-Cross-Domain-Policies: none
+X-XSS-Protection: 0
+Content-Type: application/json; charset=utf-8
+Content-Length: 15
+ETag: W/"f-VaSQ4oDUiZblZNAEkkN+sX+q3Sg"
+Date: Mon, 02 Nov 2026 15:59:12 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+{"status":"ok"}

@@ -1,0 +1,21 @@
+# CONTROL: 12 failed logins on feature/security-hardening with the limit raised (AUTH_RATE_LIMIT_MAX=1000) to show the configuration takes effect
+# Produced 2026-11-02 10:59:13 EST
+# Command: AUTH_RATE_LIMIT_MAX=1000 node scripts/security-evidence-server.mjs 3103 ; node scripts/security-evidence.mjs http://127.0.0.1:3103 12
+# Note: no PostgreSQL/Docker on this machine, so the API was started in-process by scripts/security-evidence-server.mjs, which stubs the Prisma client (every user lookup returns no user, so each login fails with 401 like a wrong password). Session store = in-memory (NODE_ENV=test).
+
+Target: http://127.0.0.1:3103/api/auth/login
+Sending 12 login attempts with a wrong password.
+
+attempt status  RateLimit-Remaining  body
+1       401     999                  {"error":"Invalid email or password."}
+2       401     998                  {"error":"Invalid email or password."}
+3       401     997                  {"error":"Invalid email or password."}
+4       401     996                  {"error":"Invalid email or password."}
+5       401     995                  {"error":"Invalid email or password."}
+6       401     994                  {"error":"Invalid email or password."}
+7       401     993                  {"error":"Invalid email or password."}
+8       401     992                  {"error":"Invalid email or password."}
+9       401     991                  {"error":"Invalid email or password."}
+10      401     990                  {"error":"Invalid email or password."}
+11      401     989                  {"error":"Invalid email or password."}
+12      401     988                  {"error":"Invalid email or password."}
