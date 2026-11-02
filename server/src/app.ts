@@ -1,4 +1,5 @@
 import express, { type NextFunction, type Request, type Response } from "express";
+import helmet from "helmet";
 import { createAssignmentRouter } from "./assignments/router.js";
 import { requireAuthentication } from "./auth/require-authentication.js";
 import { createAuthRouter } from "./auth/router.js";
@@ -41,6 +42,7 @@ export function createApp({
 }: AppDependencies = {}) {
   const app = express();
 
+  app.use(helmet());
   app.disable("x-powered-by");
   if (environment.nodeEnv === "production") {
     app.set("trust proxy", 1);
