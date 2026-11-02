@@ -8,7 +8,7 @@ A web app for students to enter their assignment grades, set category weights fo
 
 ## Status
 
-Milestone 1 working MVP. The application supports authentication, course/category setup, assignment grade management, weighted course averages, and cumulative GPA. The submitted version is tagged `milestone-1`.
+Milestone 2 in progress. The current application retains the Milestone 1 working MVP: authentication, course/category setup, assignment grade management, weighted course averages, and cumulative GPA. The submitted Milestone 1 version is tagged `milestone-1`; planned Milestone 2 features are not yet complete.
 
 ## Technology stack
 
@@ -18,6 +18,8 @@ Milestone 1 working MVP. The application supports authentication, course/categor
 
 ## Files
 
+- `CHANGELOG.md` - tagged milestone history and unreleased changes
+- `docs/milestone-2-overview.md` - Milestone 2 scope, process, Definition of Done, and coverage targets
 - `docs/milestone-1-overview.md` - updated product brief, MVP scope, process, and Definition of Done
 - `docs/BACKLOG.md` - prioritized user stories
 - `docs/architecture-diagram.md` - architecture diagram (Mermaid)
@@ -128,11 +130,12 @@ Other root commands:
 ```bash
 npm run build
 npm test
+npm run test:coverage
 npm start
 npm run preview
 ```
 
-`npm start` runs the compiled server and requires `npm run build` first. The Express server only serves the API; `npm run preview` serves the compiled React client at `http://localhost:4173` and proxies `/api` to it. Verify the API at `GET /api/health`; a healthy server returns `{ "status": "ok" }`. `GET /api/ready` also checks the PostgreSQL connection and returns `{ "status": "ready" }` when the database is available.
+`npm run test:coverage` runs the workspace test suites with Vitest's V8 coverage provider and writes ignored coverage output within each workspace. `npm start` runs the compiled server and requires `npm run build` first. The Express server only serves the API; `npm run preview` serves the compiled React client at `http://localhost:4173` and proxies `/api` to it. Verify the API at `GET /api/health`; a healthy server returns `{ "status": "ok" }`. `GET /api/ready` also checks the PostgreSQL connection and returns `{ "status": "ready" }` when the database is available.
 
 The database contains users, courses, weighted categories, assignments, and server-side sessions. Registration and login use Argon2id password hashes and sessions stored in PostgreSQL. Follow the [local database development guide](docs/local-database-development.md) for migrations, shutdown, reset, and troubleshooting. Follow the [Milestone 1 verification guide](docs/verification-guide.md) for the exact sample workflow and expected grade calculations.
 
@@ -220,7 +223,7 @@ A backlog item is Done when:
 - [ ] New setup steps, environment variables, database migrations, and affected designs are documented
 - [ ] The change is committed with a descriptive message and is ready for teammate review
 
-The complete Milestone 1 scope and process are documented in [docs/milestone-1-overview.md](docs/milestone-1-overview.md).
+The completed Milestone 1 scope and process are documented in [docs/milestone-1-overview.md](docs/milestone-1-overview.md). Milestone 2 plans and targets are in [docs/milestone-2-overview.md](docs/milestone-2-overview.md), and release history is recorded in the [changelog](CHANGELOG.md).
 
 ## License
 

@@ -19,6 +19,7 @@
     "build": "npm run build --workspace client && npm run build --workspace server",
     "preview": "npm run preview --workspace client",
     "test": "npm run test --workspaces --if-present",
+    "test:coverage": "npm run test:coverage --workspaces --if-present",
     "start": "npm run start --workspace server",
     "db:start": "docker compose up -d --wait postgres",
     "db:stop": "docker compose down",
@@ -31,6 +32,7 @@
     "db:studio": "npm run db:studio --workspace server"
   },
   "devDependencies": {
+    "@vitest/coverage-v8": "^5.0.2",
     "concurrently": "^10.0.5"
   },
   "allowScripts": {
