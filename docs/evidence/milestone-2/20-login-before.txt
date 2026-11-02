@@ -1,0 +1,21 @@
+# BEFORE: 12 failed logins at commit 1462d83 (no rate limiter in the code)
+# Produced 2026-11-02 10:59:11 EST
+# Command: node scripts/security-evidence.mjs http://127.0.0.1:3101 12
+# Note: no PostgreSQL/Docker on this machine, so the API was started in-process by scripts/security-evidence-server.mjs, which stubs the Prisma client (every user lookup returns no user, so each login fails with 401 like a wrong password). Session store = in-memory (NODE_ENV=test).
+
+Target: http://127.0.0.1:3101/api/auth/login
+Sending 12 login attempts with a wrong password.
+
+attempt status  RateLimit-Remaining  body
+1       401     (none)               {"error":"Invalid email or password."}
+2       401     (none)               {"error":"Invalid email or password."}
+3       401     (none)               {"error":"Invalid email or password."}
+4       401     (none)               {"error":"Invalid email or password."}
+5       401     (none)               {"error":"Invalid email or password."}
+6       401     (none)               {"error":"Invalid email or password."}
+7       401     (none)               {"error":"Invalid email or password."}
+8       401     (none)               {"error":"Invalid email or password."}
+9       401     (none)               {"error":"Invalid email or password."}
+10      401     (none)               {"error":"Invalid email or password."}
+11      401     (none)               {"error":"Invalid email or password."}
+12      401     (none)               {"error":"Invalid email or password."}

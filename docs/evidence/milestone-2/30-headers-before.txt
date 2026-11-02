@@ -1,0 +1,14 @@
+# BEFORE: GET /api/health response headers at commit 1462d83 (origin/feature/what-if-calculator, no helmet)
+# Produced 2026-11-02 10:59:11 EST
+# Command: curl -i http://127.0.0.1:3101/api/health
+# Note: no PostgreSQL/Docker on this machine, so the API was started in-process by scripts/security-evidence-server.mjs, which stubs the Prisma client (every user lookup returns no user, so each login fails with 401 like a wrong password). Session store = in-memory (NODE_ENV=test).
+
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Content-Length: 15
+ETag: W/"f-VaSQ4oDUiZblZNAEkkN+sX+q3Sg"
+Date: Mon, 02 Nov 2026 15:59:11 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+{"status":"ok"}

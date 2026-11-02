@@ -18,10 +18,10 @@ Milestone 2 builds on the working Milestone 1 application by completing addition
 - US-06: student-controlled creation, copying, and revocation of read-only secret links using cryptographically random tokens stored only as hashes; guests do not need accounts.
 - US-07: an authorized, read-only guest academic summary.
 - Automated unit and integration testing, coverage measurement, and QA evidence.
-- Security analysis, an implemented and testable control, and before-and-after evidence.
+- Security analysis, an implemented and testable control, and before-and-after evidence. **Completed:** threat model and OWASP Top 10 review in [security.md](security.md); per-IP login and registration rate limiting plus Helmet security headers, both covered by server tests; before-and-after outputs in `evidence/milestone-2/`.
 - Updated reproducibility and verification instructions for a fresh clone.
 
-US-05 is completed in the current application. The remaining scope items are planned work, not claims about completed behavior.
+US-05 and the security analysis and control are completed in the current application. The remaining scope items are planned work, not claims about completed behavior.
 
 ## Definition of Done
 

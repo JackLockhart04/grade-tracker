@@ -30,6 +30,7 @@ Milestone 2 in progress. The application includes the Milestone 1 working MVP pl
 - `docs/wireframes.md` - responsive, multi-screen UX wireframes
 - `docs/design-patterns.md` - implemented design patterns and rationale
 - `docs/verification-guide.md` - fresh-clone setup and current acceptance checks
+- `docs/security.md` - threat model, OWASP Top 10 review, and the implemented security controls
 - `docs/quality-checks.md` - Lighthouse, accessibility, responsive, and performance check procedure
 - `docs/contributions.md` - team contribution statements for review before submission
 - `docs/adr/` - accepted architecture decision records
@@ -73,6 +74,8 @@ Run all commands from the repository root. Docker Desktop must be started manual
    ```bash
    node -e "console.log(require('node:crypto').randomBytes(32).toString('hex'))"
    ```
+
+   The remaining variables can stay at their example values. `AUTH_RATE_LIMIT_MAX` (default `10`) and `AUTH_RATE_LIMIT_WINDOW_MS` (default `900000`, 15 minutes) control how many login or registration attempts one client IP may make per window; both are optional.
 
 4. Confirm Docker is available, then start the local PostgreSQL container:
 
@@ -210,6 +213,15 @@ The standard grade-point scale is:
 | Below 60% | F | 0.0 |
 
 Extra credit can raise a course average above 100%, but grade points remain capped at 4.0. Displayed calculations are rounded to two decimal places. Until all work is entered, the interface labels the result as a current grade rather than a final grade.
+
+## Security
+
+- Passwords are hashed with Argon2id, the session id is regenerated at login, and session cookies are HTTP-only and `SameSite=Lax`.
+- `POST /api/auth/login` and `POST /api/auth/register` are rate limited per client IP: 10 attempts per 15 minutes by default, then `429 { "error": "Too many attempts. Try again later." }` with `RateLimit-*` headers. Adjust with `AUTH_RATE_LIMIT_MAX` and `AUTH_RATE_LIMIT_WINDOW_MS`.
+- Every API response carries the Helmet security headers (`X-Content-Type-Options: nosniff`, `X-Frame-Options: SAMEORIGIN`, `Content-Security-Policy`, `Referrer-Policy: no-referrer`, and others).
+- All course, category, and assignment queries are scoped to the signed-in user.
+
+Run `node scripts/security-evidence.mjs http://localhost:3000` against a running server to watch the rate limit trigger, or `npm test --workspace server` for the automated checks. The threat model, OWASP Top 10 review, and before-and-after evidence are in [docs/security.md](docs/security.md).
 
 ## Branching
 

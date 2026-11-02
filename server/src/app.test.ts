@@ -41,6 +41,16 @@ describe("GET /api/health", () => {
     expect(response.status).toBe(200);
     expect(await response.json()).toEqual({ status: "ok" });
   });
+
+  it("sends the helmet security headers on every response", async () => {
+    const response = await request(createApp(), "/api/health");
+
+    expect(response.headers.get("x-content-type-options")).toBe("nosniff");
+    expect(response.headers.get("x-frame-options")).toBe("SAMEORIGIN");
+    expect(response.headers.get("content-security-policy")).toContain("default-src 'self'");
+    expect(response.headers.get("referrer-policy")).toBe("no-referrer");
+    expect(response.headers.get("x-powered-by")).toBeNull();
+  });
 });
 
 describe("GET /api/ready", () => {

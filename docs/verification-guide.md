@@ -70,7 +70,7 @@ npm run test:coverage
 Expected results:
 
 - The React client and Express server compile successfully.
-- The server health/readiness, malformed-JSON, calculation, and What-If route suites pass all 44 tests.
+- The server health/readiness, security-header, malformed-JSON, calculation, authentication rate-limit, and What-If route suites pass all 48 tests.
 - The client What-If interface suite passes all 17 tests, including stale-response handling and non-persistence behavior.
 - Coverage reports are written to ignored `client/coverage` and `server/coverage` folders, and `server/src/grades/calculations.ts` reports at least 90% line coverage.
 
@@ -216,14 +216,31 @@ The updated Software Engineering calculation is:
 8. Change a real assignment or category and confirm any displayed projection is cleared.
 9. Resize to a phone-width viewport and confirm the calculator fields and results stack without page-level horizontal scrolling.
 
-## 9. Verify privacy between users
+## 9. Verify the security control
+
+The API limits each client IP to 10 login attempts and 10 registration attempts per 15 minutes and sends Helmet security headers on every response.
+
+1. With `npm run dev` still running, open a second terminal at the repository root and run:
+
+   ```bash
+   node scripts/security-evidence.mjs http://localhost:3000
+   ```
+
+2. Confirm the table shows attempts 1-10 with status `401` and `RateLimit-Remaining` counting down from 9 to 0, then attempts 11 and 12 with status `429` and the body `{"error":"Too many attempts. Try again later."}`.
+3. Try to log in through the browser with any password. The form should show the "Too many attempts" message until the window expires or the server restarts.
+4. Run `curl -i http://localhost:3000/api/health` and confirm the response includes `X-Content-Type-Options: nosniff`, `X-Frame-Options: SAMEORIGIN`, and `Content-Security-Policy`.
+5. Restart the server (`Ctrl+C`, then `npm run dev`) to clear the in-memory counter before continuing.
+
+Registration and login each keep their own counter, so a blocked login does not block registration of a new account. The recorded before-and-after outputs are in `docs/evidence/milestone-2/`, and `docs/security.md` explains the threat model and the controls.
+
+## 10. Verify privacy between users
 
 1. Log out of the demonstration account.
 2. Register `ta.second@example.com` with a different valid password.
 3. Confirm the new account has an empty dashboard and cannot see the first account's courses.
 4. Log out and return to the first account to confirm its data remains unchanged.
 
-## 10. Verify persistence and responsive behavior
+## 11. Verify persistence and responsive behavior
 
 1. Stop `npm run dev` with `Ctrl+C`.
 2. Start it again with `npm run dev`.
@@ -234,7 +251,7 @@ The updated Software Engineering calculation is:
 
 Run and record the more complete Lighthouse, accessibility, zoom, and performance procedure in [quality-checks.md](quality-checks.md) against the final Milestone 2 commit.
 
-## 11. Stop the local environment
+## 12. Stop the local environment
 
 Stop the development servers with `Ctrl+C`, then stop PostgreSQL:
 
@@ -257,6 +274,7 @@ Normal shutdown preserves the local demonstration data. Database reset instructi
 - [ ] Cumulative GPA is weighted by graded credit hours.
 - [ ] A What-If score updates projected course grade and GPA without saving an assignment.
 - [ ] Clearing, leaving, refreshing, or changing real course data discards the projection.
+- [ ] The eleventh login attempt returns `429` and `/api/health` carries the security headers.
 - [ ] A second user cannot see the first user's data.
 - [ ] Data persists after restarting the application.
 - [ ] The interface remains usable at a phone-width viewport and by keyboard.

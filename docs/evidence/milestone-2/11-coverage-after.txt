@@ -1,0 +1,44 @@
+
+> @grade-tracker/server@0.1.0 test:coverage
+> vitest run --coverage --coverage.include="src/**/*.ts" --coverage.exclude="src/generated/**" --coverage.exclude="src/**/*.d.ts" --coverage.exclude="src/**/*.test.ts" --passWithNoTests
+
+
+ RUN  v5.0.2 /private/tmp/gt-sec/server
+      Coverage enabled with v8
+
+
+ Test Files  4 passed (4)
+      Tests  48 passed (48)
+   Start at  10:56:23
+   Duration  262ms (tests 35%, import 32%, transform 28%, worker 5%)
+
+[34m % [39m[2mCoverage report from [22m[33mv8[39m
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |   44.65 |    38.15 |   60.46 |   44.28 |                   
+ src               |   83.87 |    76.92 |   71.42 |   83.87 |                   
+  app.ts           |   92.85 |     90.9 |   83.33 |   92.85 | 48,67             
+  server.ts        |       0 |        0 |       0 |       0 | 3-6               
+ src/assignments   |    9.78 |        0 |    9.09 |    9.78 |                   
+  router.ts        |    9.78 |        0 |    9.09 |    9.78 | ...76-210,215-237 
+ src/auth          |   52.47 |    52.17 |    61.9 |      53 |                   
+  ...entication.ts |   66.66 |       50 |     100 |   66.66 | 13-14             
+  router.ts        |   47.12 |    52.38 |   52.94 |   47.67 | ...80,190,201-218 
+  session.ts       |     100 |       50 |     100 |     100 | 18                
+ src/config        |   71.42 |       50 |     100 |   71.42 |                   
+  environment.ts   |   71.42 |       50 |     100 |   71.42 | 30-36,49,53       
+ src/courses       |   30.93 |    23.33 |      48 |   30.16 |                   
+  router.ts        |   30.93 |    23.33 |      48 |   30.16 | ...34-494,499-521 
+ src/database      |   66.66 |      100 |       0 |   66.66 |                   
+  readiness.ts     |       0 |      100 |       0 |       0 | 4                 
+ src/grades        |   98.24 |    96.66 |     100 |   98.18 |                   
+  calculations.ts  |   98.24 |    96.66 |     100 |   98.18 | 186               
+-------------------|---------|----------|---------|---------|-------------------
+
+=============================== Coverage summary ===============================
+Statements   : 44.65% ( 217/486 )
+Branches     : 38.15% ( 95/249 )
+Functions    : 60.46% ( 52/86 )
+Lines        : 44.28% ( 213/481 )
+================================================================================
